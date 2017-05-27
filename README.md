@@ -40,7 +40,7 @@ Using HTTP Get Requests:
 - Movies at a location: Localhost/Location/Movies/
 
 ### Returns information about a specific movie
-- Movie info:  Localhost/Movie/
+- Movie info:  Localhost/Movie/movieID="movieID
 
 
 
