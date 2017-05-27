@@ -31,16 +31,16 @@ Using HTTP Get Requests:
 
 
 ### Lists all the movies in all the theaters
-- Movies:     Localhost/Movies
+- Movies:     Localhost/Movies/
 
 ### Lists all the locations of the theaters
-- Locations:  Localhost/Locations
+- Locations:  Localhost/Locations/
 
 ### Lists all the movies at a location
-- Movies at a location: Localhost/Location/Movies
+- Movies at a location: Localhost/Location/Movies/
 
 ### Returns information about a specific movie
-- Movie info:  Localhost/Movie
+- Movie info:  Localhost/Movie/
 
 
 
