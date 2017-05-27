@@ -1,4 +1,7 @@
 #include <iostream>
+#include <stdlib.h>
+#include <string>
+#include <string.h>
 #include "fcgio.h"
 
 using namespace std;
@@ -22,19 +25,14 @@ int main(void) {
         cin.rdbuf(&cin_fcgi_streambuf);
         cout.rdbuf(&cout_fcgi_streambuf);
         cerr.rdbuf(&cerr_fcgi_streambuf);
+	
+	//Getting the request uri:
+	const char* uri = FCGX_GetParam("REQUEST_URI",request.envp);
 
-        cout << "Content-type: text/html\r\n"
-             << "\r\n"
-             << "<html>\n"
-             << "  <head>\n"
-             << "    <title>Hello, World!</title>\n"
-             << "  </head>\n"
-             << "  <body>\n"
-             << "    <h1>Hello, World!</h1>\n"
-             << "  </body>\n"
-             << "</html>\n";
 
-        // Note: the fcgi_streambuf destructor will auto flush
+	////Output
+             cout << "Content-type: text/plain\r\n"
+              << "\r\n" << uri << "\n";
     }
 
     // restore stdio streambufs

@@ -7,4 +7,4 @@ sudo cp ./nginx.conf /etc/nginx/
 sudo nginx
 g++ testcgi.cpp -lfcgi++ -lfcgi -o testcgi
 
-spawn-fcgi -p 8000 -n testcgi
+spawn-fcgi -p 8000 testcgi
