@@ -1,0 +1,246 @@
+#!/bin/bash 
+set -e 
+OPT=$(getopt -n "cf-dns" -o "h,v" -l "help,version,register:,movies,order:,history,cancel:,restore-key:,userkey:,locations,movie-info:" -- "$@")
+
+eval set -- "$OPT"
+hF=0
+vF=0
+registerF=0
+moviesF=0
+orderF=0
+historyF=0
+cancelF=0
+restoreF=0
+username=""
+password=""
+locationsF=0
+movieInfoF=0
+userKey=$GLOBAL_USER_KEY
+
+
+# check correct format of credentials i.ex : my@mail.com:apikey
+function check_creds(){
+		tempvar="$1"	
+		separators="${tempvar//[^:]}"	# checking amount of ':' in credentials string
+		
+		if [ "${#separators}" == 1 ]; then
+			#if have exactly 1 ':' delimiter, set key to apikey variable
+			password="${1#*:}"			
+			username="${1%%:*}"	
+		elif [ "${#separators}" == 0 ]; then
+			echo "client: credentials do not contain an API component"
+			exit 1
+		else			
+			if [ "$q" -eq 0 ]; then		# not in quite mode
+				echo "client: incorrect credentials format, correct format :
+				username:password"
+			fi
+			exit 1
+		fi
+}
+
+function credentials_analyzation(){
+		# if were selected -c operator, check it's parameters correctness
+		if [ "$c" -eq 1 ]; then
+				#run function to check correct credentials
+				check_creds "$received_creds"
+		#check if exists $creds in global environment, if has, check correctness of credentials
+		elif ! [ -z "$creds" ]; then
+				check_creds "$creds"
+		else
+			if [ "$q" -eq 0 ]; then		# not in quite mode
+				echo cf-dns: CloudFlare credentials not specified
+			fi
+				exit 1
+		fi
+}
+
+while [ "$1" != "--" ]; do
+    case "$1" in
+    -h|--help)
+            hF=1
+            ;;
+	-v|--version)
+            vF=1
+            ;;
+    --register)
+            register_credentials="$2"
+            registerF=1
+            shift
+            ;;
+	--restore-key)
+			restoreF=1
+			restore_credentials="$2"
+			shift    
+	    ;;
+	--movies)
+            moviesF=1
+	    ;;
+	--cancel)
+            cancel_movie_id="$2"
+            cancelF=1
+            shift
+	    ;;
+	--history)
+            historyF=1
+	    ;;
+	--order)
+            movie_order_id="$2"
+            orderF=1
+            shift
+	    ;;
+	 --userkey)
+            userKey="$2"
+            shift
+	    ;;
+	  --locations)
+            userKey="$2"
+            shift
+	    ;;
+	    
+	   --movie-info)
+            movie_id="$2"
+            movieInfoF=1
+            shift
+	 *)
+			echo Unknown parameter
+			exit 1
+            ;;
+    esac
+    shift
+	
+done
+
+
+if ! [ -z "$2" ]; then
+	echo "cf-dns: unknown extra arguments : "$2""
+	exit 1
+fi
+
+#version
+if [ "$vF" -eq 1 ];then
+echo "Linux project version 1.0"
+fi
+
+
+# Synopsis
+if [ "$hF" -eq 1 ];then
+echo "Movie ordering system :
+	./client -r :username=\"username\"&password=\"pass\"
+	"
+    exit
+fi
+
+# Register
+if [ "$registerF" == 1 ]; then
+
+if ! [ -z "$register_credentials" ]; then
+		check_creds "$register_credentials"
+		
+		userAuthKey=$(curl http://localhost/Register/username="$username"&password="$password")
+		    #| jq -r ".result[0].key")		# uncomment this after implementing JSON
+
+		echo "You registered successfully:
+		username : "$username"
+		password : "$password"
+		userKey  : "$userAuthKey"
+		
+		please save your userKey in safe place for ordering tikets
+		
+		run next command to add key to work environment:
+		
+		export GLOBAL_USER_KEY="$userAuthKey""
+else
+	echo "Incorrect credentials"
+	fi
+fi
+
+# Get all movies list
+if [ "$moviesF" == 1 ]; then 
+	movies_list=$(curl "http://localhost/Movies/")
+	
+	# !!! implement iteration to print movies
+fi
+
+# Restore user key
+if [ "$restoreF" == 1 ];then
+	restoreF=0
+	if ! [ -z "$restore_credentials" ]; then
+		check_creds "$restore_credentials"
+		userKey=$(curl "http://localhost/RecoverKey/username="$username"&password="$password"")
+		if ! [ -z "$userKey" ]; then
+			echo "Your secret key is : \""$userKey"\"	, save it in safe place !"
+		else
+			echo "Key for provided username:password pair not found in system"
+			exit 1
+		fi
+	else
+		echo "No credentials provided"
+		fi
+fi
+# Order ticket
+if [ "$orderF" == 1 ]; then
+	if ! [ -z "$userKey" ];then
+		orderID=$(curl -s http://localhost/Order/id="$movie_order_id"&key="$userKey" | jq ".id")
+		if ! [ -z "$orderID" ];then
+			echo "Your order number is : "$orderID", enjoy!"
+		else
+			echo "Error in ordering process, check all parameters"
+			exit 1
+	fi
+	else
+		echo "No credentials provided"
+		exit 1
+	fi
+fi
+
+# Cancel ordered ticket
+if [ "$cancelF" == 1 ]; then	
+	if ! [ -z "$userKey" ];then
+		cancel_result=$(curl -s http://localhost/Cancel/id="$cancel_movie_id"&key="$userKey" | jq ".result")
+		if  [ "$cancel_result" == "Success" ];then
+			echo "Your ticket number \""$cancel_movie_id"\" been cancelled!"
+		else
+			echo "Error in cancelling process, check all parameters"
+			exit 1
+		fi
+	else
+		echo "No credentials provided"		
+	fi	
+fi
+
+
+# History view
+if [ "$historyF" == 1 ];then
+	if ! [ -z "$userKey" ]; then
+		history_list=$(curl "http://lcalhost/History/key="$userKey"")
+		
+		# !!!! implement iteration to print history list
+	else
+		echo "No credentials provided"
+	fi
+fi
+
+# Locations print
+if [ "$locations" == 1 ];then
+	locations_list=$(curl "http://localhost/Locations/")
+	
+	# !!!! implement iteration to print locations list
+fi
+
+
+# Movie info view
+if  [ "$movieInfoF" == 1 ];then
+	if ! [ -z "$movie_id" ]; then
+		movie_info=$(curl "http://localhost/Movie/ID="$movie_id"" | jq ".id")
+		if ! [ -z "$movie_info" ];then
+			# !!! implement showing movie information
+		else
+			echo "Movie with ID="$movie_id" not found in library"
+		fi		
+	else
+		echo "Movie ID not provided"
+	fi
+fi  
+
+
