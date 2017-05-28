@@ -1,4 +1,4 @@
-#include "Parser.h"
+#include "RequestManager.h"
 #include <iostream>
 #include <string>
 #include <string.h>
@@ -41,8 +41,7 @@ bool  RequestManager::parseTwoParam(string stringToParse, string param1, string 
 
 string RequestManager::registerAccount(string username, string password){
 	//Here user will be registered to the DB if doesn't exist, returns JSON:
-	cout << "{\"key\":\"3x4mpl3k3y\",\"status\":\"success\"}" << endl;
-	return "";
+	return "{\"key\":\"3x4mpl3k3y\",\"status\":\"success\"}";
 };
 
 string RequestManager::getKey(string username, string password){
@@ -53,40 +52,39 @@ string RequestManager::getKey(string username, string password){
 string RequestManager::recoverKey(string username, string password){
 	//Here user will be checked and his key will be returned
 	string key = getKey(username, password);
-	cout << "{\"key\:\"" << key << "\",\"status\":\"success\"}" << endl ;
-	return "";
+
+	return "{\"key\:\"" + key + "\",\"status\":\"success\"}";
 }
 
 string RequestManager::getHistory(string key){
 	//Here user will be taken from the database using the key, his order history will be returned
 
-	cout << "{\"Orders\":[{\"OrderID\:\"1\"}],\"status\":\"success\"}" << endl;
-	return "";
+	return "{\"Orders\":[{\"OrderID\:\"1\"}],\"status\":\"success\"}";
 };
 
 string RequestManager::orderTicket(string orderID, string key){
-	cout << "Ticket Ordered" << orderID << ":" << key << endl;
-	return "";
+
+	return "Ticket Ordered " + orderID + ": " + key;
 };
 
 string RequestManager::cancelTicket(string ticketID,string key){
-	cout << "Ticket canceled : " << ticketID << endl;
-	return "";
+
+	return "Ticket canceled : " + ticketID;
 }
 
 string RequestManager::getMoviesList(){
-	cout << "Movies List" << endl;
-	return "";
+
+	return "Movies List";
 };
 
 string RequestManager::getLocationsList(){
-	cout << "Locations List" << endl;
-	return "";
+
+	return "Locations List";
 };
 
 string RequestManager::getMovieInfo(string movieID){
-	cout << "Movie info: " << movieID << endl;;
-	return "";
+
+	return "Movie info: " + movieID;
 };
 
 string RequestManager::getLocationInfo(string locationName){
@@ -94,75 +92,86 @@ string RequestManager::getLocationInfo(string locationName){
 	return "";
 };
 
-string RequestManager::parse(const char* stringToParse){
-	string parsedString(stringToParse);
-	string user;
-	string pass;
-	string key;
-	string orderID;
-	string ticketID;
-	string movieID, locationName;
+void RequestManager::parse(const char* stringToParse){
+	string  parsedString(stringToParse), 
+	   	user,
+		pass,
+		key,
+		orderID,
+		ticketID,
+		movieID,
+		locationName,
+		response = "{\"status\":\"failure\",\"message\":\"Invalid request\"}"; //Default
 
+	
 	int option;
+	bool found = false;
 	for (int i = 0; i < RequestManager::optionsAmount; i++){
 		option = i;
 		int index = parsedString.find(options[i]);
-		if (index == 0){ parsedString = parsedString.substr(options[i].length()); break; }
+		if (index == 0){ parsedString = parsedString.substr(options[i].length());found= true; break; }
 	}
+	
+	if (found)
 
 	switch (option){
 	case REGISTER:
-		//if (parseUserAndPass(parsedString, user, pass))
+
 		if (parseTwoParam(parsedString, "username","password",user,pass))
-			return registerAccount(user, pass);
+			response = registerAccount(user, pass);
 		break;
 
 	case KEY:
-		//if (parseUserAndPass(parsedString, user, pass))
+
 		if (parseTwoParam(parsedString, "username", "password",user,pass))
-			return recoverKey(user, pass);
+			response = recoverKey(user, pass);
 		break;
 
 	case ORDER:
-		//if (parseOrderAndKey(parsedString, orderID, key))
+
 		if (parseTwoParam(parsedString, "orderID", "key",orderID,key))
-			return orderTicket(orderID,key);
+			response = orderTicket(orderID,key);
 		break;
 
 	case CANCEL:
-		//if (parseTicketIDAndKey(parsedString,ticketID,key))
+
 		if (parseTwoParam(parsedString, "ticketID", "key", ticketID, key));
-			return cancelTicket(ticketID,key);
+			response = cancelTicket(ticketID,key);
 		break;
 
 	case HISTORY:
-		//if (parseKey(parsedString, key))
+
 		if (parseOneParam(parsedString, "key",key))
-			return getHistory(key);
+			response = getHistory(key);
 		break;
 
 	case MOVIES:
+
 		if (parsedString.length() == 0)
-			return getMoviesList();
+			response = getMoviesList();
 		break;
 
 	case MOVIE:
+
 		if (parseOneParam(parsedString, "ID", movieID))
-			getMovieInfo(movieID);
+			response = getMovieInfo(movieID);
 		break;
 
 	case LOCATIONS:
+
 		if (parsedString.length() == 0)
-			return getLocationsList();
+			response = getLocationsList();
 		break;
 
 	case LOCATION:
-		cout << "Location information" << endl;
+
+		response = "Location information"; //TODO
 		break;
 
 	default:
-		cout << "Can't be parsed" << endl;
+		cout << "Default" << endl; //TODO
+		
 	}
 	
-	return "Can't be parsed";
+	cout << response;
 }
