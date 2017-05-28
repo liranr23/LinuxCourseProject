@@ -2,6 +2,7 @@
 #include <iostream>
 #include <string>
 #include <string.h>
+#include "Movie.h"
 
 using namespace std;
 
@@ -73,8 +74,11 @@ string RequestManager::cancelTicket(string ticketID,string key){
 }
 
 string RequestManager::getMoviesList(){
-
-	return "Movies List";
+	//Movies will be fetched from the db instead: TODO
+	Movie m("1", "check", "me", "2017", "just a movie", "http:www.imdb.com/check");
+        Movie m2("2", "check2", "meeeee", "2017", "just a movie2", "http:www.imdb.com/check2");
+	
+	return "{\"status\":\"success\",\"movies\":[" + m.ToJson() +"," + m2.ToJson() + "]}";
 };
 
 string RequestManager::getLocationsList(){
