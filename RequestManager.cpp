@@ -3,6 +3,9 @@
 #include <string>
 #include <string.h>
 #include "Movie.h"
+#include "User.h"
+#include "Location.h"
+
 
 using namespace std;
 
@@ -75,15 +78,30 @@ string RequestManager::cancelTicket(string ticketID,string key){
 
 string RequestManager::getMoviesList(){
 	//Movies will be fetched from the db instead: TODO
-	Movie m("1", "check", "me", "2017", "just a movie", "http:www.imdb.com/check");
+	Movie m1("1", "check", "me", "2017", "just a movie", "http:www.imdb.com/check");
         Movie m2("2", "check2", "meeeee", "2017", "just a movie2", "http:www.imdb.com/check2");
 	
-	return "{\"status\":\"success\",\"movies\":[" + m.ToJson() +"," + m2.ToJson() + "]}";
+	return "{\"status\":\"success\",\"movies\":[" + m1.ToJson() +"," + m2.ToJson() + "]}";
 };
 
 string RequestManager::getLocationsList(){
+	//Locations will be fetched from the db instead: TODO
+	Location l1("Israel","Tel Aviv");
+	Location l2("USA", "NYC");
 
-	return "Locations List";
+	Movie m1("1", "check", "me", "2017", "just a movie", "http:www.imdb.com/check");
+        Movie m2("2", "check2", "meeeee", "2017", "just a movie2", "http:www.imdb.com/check2");
+	
+	l1.addMovie(m1);
+	l1.addMovie(m2);
+
+	Movie m3("1", "check", "me", "2017", "just a movie", "http:www.imdb.com/check");
+        Movie m4("2", "check2", "meeeee", "2017", "just a movie2", "http:www.imdb.com/check2");
+
+	l2.addMovie(m3);
+	l2.addMovie(m4);
+
+	return "{\"status\":\"success\",\"locations\":[" + l1.ToJson() +"," + l2.ToJson() + "]}";
 };
 
 string RequestManager::getMovieInfo(string movieID){

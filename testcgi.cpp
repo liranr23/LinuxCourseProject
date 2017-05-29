@@ -3,8 +3,6 @@
 #include <string>
 #include <string.h>
 #include "fcgio.h"
-#include "Location.h"
-#include "User.h"
 #include "RequestManager.h"
 
 using namespace std;
@@ -34,16 +32,6 @@ int main(void) {
 
         cout << "Content-type: text/plain\r\n"
 	     << "\r\n";
-	////Output Liran
-        //Location l("Israel", "Be'er Sheba");
-        //Movie m("1", "check", "me", "2017", "just a movie", "http:www.imdb.com/check");
-        //Movie m2("2", "check2", "meeeee", "2017", "just a movie2", "http:www.imdb.com/check2");
-        //l.addMovie(m);
-        //l.addMovie(m2);
-        //<< "\r\n" << l.ToJson() << "\n";
-        //<< "\r\n" << uri << "\n";
-
-	//Output Jonathan
 	RequestManager::parse(uri);
 	cout <<"\n";
     }
