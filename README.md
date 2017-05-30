@@ -2,10 +2,20 @@
 
 ## Make sure you install the relevant tools:
 
+### Fast CGI:
 - sudo apt-get install libfcgi-dev
 - sudo apt-get install spawn-fcgi
+
+## Nginx
 - sudo apt-get install nginx
+
+## For Script
 - sudo apt-get install curl
+
+## Sqlite3
+- sudo apt-get install sqlite3  (On some flavors installed by default eg; Ubuntu 16.04)
+- sudo apt-get install libsqlite3-dev
+
 
 
 ## API:
