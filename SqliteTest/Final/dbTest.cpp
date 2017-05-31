@@ -3,6 +3,7 @@
 using namespace std;
 
 int main (int argc, char* argv[]){
+    // RequestManager::parse("/Register/username=Anna&password=Dubi");
     // RequestManager::parse("/Movies/");
     // RequestManager::parse("/Movies/ID=2");
     // RequestManager::parse("/Locations/");

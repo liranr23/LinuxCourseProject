@@ -35,18 +35,19 @@ bool  RequestManager::parseTwoParam(string stringToParse, string param1, string 
 
 
 void RequestManager::registerAccount(string username, string password){
-	//Here user will be registered to the DB if doesn't exist, returns JSON:
-	cout <<  "{\"key\":\"3x4mpl3k3y\",\"status\":\"success\"}";
+	//User will be registered to the DB if doesn't exist, outputs JSON:
+	Database db;
+	db.createAccount(username,password);
 };
 
 void RequestManager::recoverKey(string username, string password){
-	//Here user will be checked and his key will be returned
+	//User will be checked and his key will be returned
 	Database db;
 	db.selectKey(username,password);
 }
 
 void RequestManager::getHistory(string key){
-	//Here user will be taken from the database using the key, his order history will be returned
+	//User will be taken from the database using the key, his order history will be returned
 
 	cout << "{\"Orders\":[{\"OrderID\:\"1\"}],\"status\":\"success\"}";
 };

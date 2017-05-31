@@ -17,7 +17,13 @@ class Database{
     int rc;
     const char* data;
 
+
+    string createKey(string,string);
+
     public:
+
+    static int counter;
+    static int selectCounter;
 
     Database();
     ~Database();
@@ -40,9 +46,10 @@ class Database{
     void selectLocationByID(string);
 
     void selectKey(string,string);
+    void createAccount(string,string);
 
-    static int counter;
-    static int selectCounter;
+
+
 };
 
 #endif
