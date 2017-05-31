@@ -102,6 +102,7 @@ while [ "$1" != "--" ]; do
             movie_id="$2"
             movieInfoF=1
             shift
+            ;;
 	 *)
 			echo Unknown parameter
 			exit 1
@@ -126,7 +127,14 @@ fi
 # Synopsis
 if [ "$hF" -eq 1 ];then
 echo "Movie ordering system :
-	./client -r :username=\"username\"&password=\"pass\"
+	./client -h :	this synopsis
+	
+	Register to system:
+		./client --register username:password
+	
+	View list of all movies :
+		./client --movies
+	
 	"
     exit
 fi
@@ -134,32 +142,43 @@ fi
 # Register
 if [ "$registerF" == 1 ]; then
 
-if ! [ -z "$register_credentials" ]; then
+	if ! [ -z "$register_credentials" ]; then
 		check_creds "$register_credentials"
 		
-		userAuthKey=$(curl http://localhost/Register/username="$username"&password="$password")
-		    #| jq -r ".result[0].key")		# uncomment this after implementing JSON
+		data=$(curl -s "http://localhost/Register/username="$username"&password="$password"")
 
-		echo "You registered successfully:
-		username : "$username"
-		password : "$password"
-		userKey  : "$userAuthKey"
-		
-		please save your userKey in safe place for ordering tikets
-		
-		run next command to add key to work environment:
-		
-		export GLOBAL_USER_KEY="$userAuthKey""
-else
-	echo "Incorrect credentials"
+		if [ $(jq -r ".status" <<< "$data") == "success" ]; then
+			userAuthKey=$(jq -r ".key" <<< "$data")
+			echo -e "\n--------------------\nRegistration agent : You registered successfully\n--------------------\n	Username : "$username"\n	Password : "$password"\n	UserKey  : "$userAuthKey"\n	please save your userKey in safe place for ordering tikets\n	run next command to add key to work environment:\n	export GLOBAL_USER_KEY="$userAuthKey""
+		else
+			echo "\n--------------------\nRegistration agent : Registration failed, try again\n--------------------\n"
+			exit 1
+		fi
+	else
+		echo "Incorrect credentials"
+		exit 1
 	fi
 fi
 
 # Get all movies list
 if [ "$moviesF" == 1 ]; then 
-	movies_list=$(curl "http://localhost/Movies/")
+	movies_list="$(curl -s "http://localhost/Movies/")"
+	if [ $(jq -r ".status" <<< "$movies_list") == "success" ]; then
 	
-	# !!! implement iteration to print movies
+	length="$(curl -s "http://localhost/Movies/" | jq length)"
+	format="%-3s| %-6s | %-50s\n"		#format for output
+	printf "\nFull Movies list :\n-------------------------\n$format--------------------------------------------------------\n" "ID" "Year" "Movie title"
+		for i in `seq 0 $length`;
+        do   
+			id="$(jq -r ".movies[$i].id" <<< $movies_list)"
+			title="$(jq -r ".movies[$i].title" <<< $movies_list)"
+			year="$(jq -r ".movies[$i].year" <<< $movies_list)"
+			printf "$format" "$id" "$year" "$title"
+        done  
+	else
+		echo "No data found"
+		exit 1
+	fi
 fi
 
 # Restore user key
@@ -167,22 +186,27 @@ if [ "$restoreF" == 1 ];then
 	restoreF=0
 	if ! [ -z "$restore_credentials" ]; then
 		check_creds "$restore_credentials"
-		userKey=$(curl "http://localhost/RecoverKey/username="$username"&password="$password"")
-		if ! [ -z "$userKey" ]; then
-			echo "Your secret key is : \""$userKey"\"	, save it in safe place !"
+		responce=$(curl -s "http://localhost/RecoverKey/username=$username&password=$password")
+		echo -e  "\n--------------------\nKey recovery agent :\n--------------------"
+		if [  $(jq -r ".status" <<< "$responce") == "success" ]; then			
+			userKey=$(jq -r ".key" <<< "$responce")
+			echo -e "Your secret key is : "$userKey", save it in safe place !\n"
 		else
-			echo "Key for provided username:password pair not found in system"
+			echo -e "Key for "$username":"$password" pair not found in system\n"
 			exit 1
 		fi
 	else
 		echo "No credentials provided"
+		exit 1
 		fi
 fi
+
 # Order ticket
 if [ "$orderF" == 1 ]; then
 	if ! [ -z "$userKey" ];then
-		orderID=$(curl -s http://localhost/Order/id="$movie_order_id"&key="$userKey" | jq ".id")
-		if ! [ -z "$orderID" ];then
+		response=$(curl -s "http://localhost/Order/orderID="$movie_order_id"&key="$userKey"" )
+		if [ $(jq -r ".status" <<< "$response") == "success"  ];then
+			orderID=$(jq -r ".OrderID" <<< "$response")
 			echo "Your order number is : "$orderID", enjoy!"
 		else
 			echo "Error in ordering process, check all parameters"
@@ -232,8 +256,9 @@ fi
 # Movie info view
 if  [ "$movieInfoF" == 1 ];then
 	if ! [ -z "$movie_id" ]; then
-		movie_info=$(curl "http://localhost/Movie/ID="$movie_id"" | jq ".id")
+		movie_info=$(curl "http://localhost/Movie/ID="$movie_id"" | jq )
 		if ! [ -z "$movie_info" ];then
+			echo "$movie_info"
 			# !!! implement showing movie information
 		else
 			echo "Movie with ID="$movie_id" not found in library"
