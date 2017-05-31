@@ -23,34 +23,37 @@
 Using HTTP Get Requests:
 
 ### Registers a new user with the username and password passed if possible
-- Register:   Localhost/Register/username="USERNAME"&password="PASSWORD"
+- localhost/Register/username=USERNAME&password=PASSWORD
 
 ### Returns user's key
-- RecoverKey: Localhost/RecoverKey/username="USERNAME"&password="PASSWORD"
+- localhost/RecoverKey/username=USERNAME&password=PASSWORD
 
 
 ### Orders a ticket for a movie at a location (represented by orderID) [Returns ticket id]
-- Order:      Localhost/Order/id="orderID"&key="userKey"
+- localhost/Order/id=ORDERID&key=USERKEY
 
 
 ### Cancel a ticket (before the screening)
-- Cancel:     Localhost/Cancel/id="ticketID"&key="userKey"
+- localhost/Cancel/id=TICKETID&key=USERKEY
 
 ### Returns tickets order history [Shows tickets ids too] :
-- History:    Localhost/History/key="userKey"
+- localhost/History/key=USERKEY
 
 
 ### Lists all the movies in all the theaters
-- Movies:     Localhost/Movies/
+- localhost/Movies/
 
 ### Lists all the locations of the theaters
-- Locations:  Localhost/Locations/
+- localhost/Locations/
 
-### Lists all the movies at a location
-- Movies at a location: Localhost/Location/Movies/
+### Returns information about a specific location
+- localhost/id=LOCATIONID
+- localhost/city=LOCATIONCITY
+- localhost/country=LOCATIONCOUNTRY
 
 ### Returns information about a specific movie
-- Movie info:  Localhost/Movie/ID="movieID"
+- localhost/Movie/ID=MOVIEID
+- localhost/Movie/name=MOVIENAME
 
 
 
