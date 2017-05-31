@@ -44,6 +44,10 @@ Response:
 - localhost/RecoverKey/username=<USERNAME>&password=<PASSWORD>
 ```
 
+Response:
+```json
+{"key":"3X4MPL3K3Y" , "status": "success"}
+```
 
 #### Orders a ticket for a movie at a location (represented by orderID) [Returns ticket id]
 ```
@@ -51,10 +55,6 @@ Response:
 ```
 
 
-#### Cancel a ticket
-```
-- localhost/Cancel/id=<ORDERID>&key=<USERKEY>
-```
 
 #### Returns tickets order history:
 ```
@@ -63,11 +63,19 @@ Response:
 
 
 #### Lists Movies information (empty for all movies):
+#### Cancel a ticket
+```
+- localhost/Cancel/id=<ORDERID>&key=<USERKEY>
+```
 ```
 - localhost/Movies/
 - localhost/Movies/ID=<MOVIEID>
 - localhost/Movies/name=<MOVIENAME>
 
+```
+Response:
+```json
+{status: success , movies[{},...]}
 ```
 
 #### Lists locations information (empty for all locations)
