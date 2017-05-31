@@ -1,6 +1,6 @@
 #include <sqlite3.h>
 #include <string>
-
+#include <list>
 #include "Movie.h"
 
 using namespace std; 
@@ -10,14 +10,17 @@ class Database{
     private:
     const char* FILENAME = "database.db";
     sqlite3* dbFile;
-    char* errMsg;
+    char* errMsg = 0;
     int rc;
-    char* query;
     const char* data;
+	list<Movie> movies;
 
     public:
 
     Database();
     ~Database();
+    static int moviesCallback(void*, int , char**, char**);
+
+    string selectQuery(string);
 
 };
