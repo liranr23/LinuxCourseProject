@@ -21,6 +21,6 @@ class Database{
     ~Database();
     static int moviesCallback(void*, int , char**, char**);
 
-    string selectQuery(string);
+    string selectAllMoviesQuery();
 
 };

@@ -15,9 +15,7 @@ Database::Database(){
     if ( rc ){
         cout << "Can't open database: " <<  sqlite3_errmsg(dbFile) << endl;
     }
-
 }
-
 Database::~Database(){
 
     sqlite3_close(dbFile);
@@ -39,9 +37,9 @@ int Database::moviesCallback(void *data, int argc, char **argv, char **movieCols
     return 0;
 };
 
-string Database::selectQuery(string query){
+string Database::selectAllMoviesQuery(){
     //cout <<  query.c_str() << endl;
-    rc = sqlite3_exec(dbFile, query.c_str(), moviesCallback, (void*)data, &errMsg);
+    rc = sqlite3_exec(dbFile, "SELECT * FROM MOVIES", moviesCallback, (void*)data, &errMsg);
 
     if( rc != SQLITE_OK ) sqlite3_free(errMsg);
 

@@ -8,7 +8,6 @@ using namespace std;
 
 int main (int argc, char* argv[]){
     Database db;
-    db.selectQuery("SELECT * FROM MOVIES");
-
+    db.selectAllMoviesQuery();
     return 0;
 }
