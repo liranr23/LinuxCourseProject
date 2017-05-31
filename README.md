@@ -34,6 +34,10 @@ Using HTTP Get Requests:
 ```
 - localhost/Register/username=<USERNAME>&password=<PASSWORD>
 ```
+Response:
+```json
+{"key":"3X4MPL3K3Y" , "status": "success"}
+```
 
 #### Returns user's key
 ```
