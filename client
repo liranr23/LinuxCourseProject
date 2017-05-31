@@ -94,8 +94,7 @@ while [ "$1" != "--" ]; do
             shift
 	    ;;
 	  --locations)
-            userKey="$2"
-            shift
+            locationsF=1
 	    ;;
 	    
 	   --movie-info)
@@ -268,4 +267,24 @@ if  [ "$movieInfoF" == 1 ];then
 	fi
 fi  
 
+
+# View locations
+if [ "$locationsF" == 1 ];then
+	locations=$(curl -s "http://localhost/Locations/")
+	length=`expr $(curl -s "http://localhost/Locations/" | jq length) - 1`
+	
+	for i in `seq 0 $length`;
+        do   
+        country="$(jq -r ".locations[$i].country" <<< $locations)"
+        city="$(jq -r ".locations[$i].city" <<< $locations)"	
+        sublength=`expr "$(curl -s localhost/Locations/ | jq .locations[$i].Movies | jq length)" - 1`
+        movies="$(curl -s localhost/Locations/ | jq .locations[$i].Movies)"
+        echo $country : $city
+        for j in `seq 0 $sublength`; do
+			movie="$( jq .[$j].title <<< $movies)"
+			echo -e "\t" $movie
+        done
+    done
+
+fi
 
