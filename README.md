@@ -58,27 +58,20 @@ Using HTTP Get Requests:
 ```
 
 
-#### Lists all the movies in all the theaters
+#### Lists Movies information (empty for all movies):
 ```
 - localhost/Movies/
+- localhost/Movies/ID=<MOVIEID>
+- localhost/Movies/name=<MOVIENAME>
+
 ```
 
-#### Lists all the locations of the theaters
+#### Lists locations information (empty for all locations)
 ```
 - localhost/Locations/
-```
-
-#### Returns information about a specific location
-```
-- localhost/Location/ID=<LOCATIONID>
-- localhost/Location/city=<LOCATIONCITY>
-- localhost/Location/country=<LOCATIONCOUNTRY>
-```
-
-#### Returns information about a specific movie
-```
-- localhost/Movie/ID=<MOVIEID>
-- localhost/Movie/name=<MOVIENAME>
+- localhost/Locations/ID=<LOCATIONID>
+- localhost/Locations/city=<LOCATIONCITY>
+- localhost/Locations/country=<LOCATIONCOUNTRY>
 ```
 
 ## Interface
