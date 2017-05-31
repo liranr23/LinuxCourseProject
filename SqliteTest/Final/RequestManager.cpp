@@ -9,7 +9,7 @@
 
 using namespace std;
 
-const int RequestManager::optionsAmount = 9;
+const int RequestManager::optionsAmount = 7;
 const string RequestManager::options[] = {
 	"/Register/",
 	"/RecoverKey/",
@@ -17,9 +17,7 @@ const string RequestManager::options[] = {
 	"/Cancel/",
 	"/History/",
 	"/Movies/",
-	"/Movie/",
 	"/Locations/",
-	"/Location/",
 };
 
 
@@ -88,15 +86,37 @@ void RequestManager::getLocationsList(){
 	
 };
 
-void RequestManager::getMovieInfo(string movieID){
+void RequestManager::getMovieInfo(string param,int opt){
 
 	Database db;
-	db.selectMovie(movieID);
+	switch(opt){
+		case BY_ID:
+			db.selectMovieByID(param);
+			break;
+		case BY_TITLE:
+			db.selectMovieByTitle(param);
+			break;
+
+		default:
+			cout << "{\"status\":\"failure\",\"message\":\"Invalid request\"}";
+	}
 };
 
-void RequestManager::getLocationInfo(string cityName){
+void RequestManager::getLocationInfo(string param,int opt){
 	Database db;
-	db.selectLocation(cityName);
+	switch(opt){
+		case BY_CITY:
+			db.selectLocationByCity(param);
+			break;
+		case BY_COUNTRY:
+			db.selectLocationByCountry(param);
+			break;
+		case BY_ID:
+			db.selectLocationByID(param);
+			break;
+		default:
+			cout << "{\"status\":\"failure\",\"message\":\"Invalid request\"}";
+	}
 };
 
 void RequestManager::parse(const char* stringToParse){
@@ -107,6 +127,8 @@ void RequestManager::parse(const char* stringToParse){
 		orderID,
 		ticketID,
 		movieID,
+		movieName,
+		locationID,
 		city,
 		country,
 		defaultResponse = "{\"status\":\"failure\",\"message\":\"Invalid request\"}"; //Default
@@ -153,30 +175,30 @@ void RequestManager::parse(const char* stringToParse){
 			getHistory(key);
 		break;
 
+
 	case MOVIES:
 
 		if (parsedString.length() == 0)
 			getMoviesList();
+		else if (parseOneParam(parsedString, "ID", movieID))
+			getMovieInfo(movieID,BY_ID);
+		else if (parseOneParam(parsedString, "title",movieName))
+			getMovieInfo(movieName,BY_TITLE);
 		break;
 
-	case MOVIE:
-
-		if (parseOneParam(parsedString, "ID", movieID))
-			getMovieInfo(movieID);
-		break;
 
 	case LOCATIONS:
-
+		//TODO
 		if (parsedString.length() == 0)
 			getLocationsList();
-		break;
+		else if (parseOneParam(parsedString,"city",city))
+			getLocationInfo(city,BY_CITY);
+		else if(parseOneParam(parsedString,"country",country))
+			getLocationInfo(country,BY_COUNTRY);
+		else if(parseOneParam(parsedString,"ID",locationID))
+			getLocationInfo(locationID,BY_ID);
 
-	case LOCATION:
-		//TODO
-		if (parseOneParam(parsedString,"city",city)){
-			getLocationInfo(city);
-
-		}
+		
 		break;
 
 	default:

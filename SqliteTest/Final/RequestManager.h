@@ -10,15 +10,15 @@ private:
 	static const string options[];
 	static const int optionsAmount;
 
-	enum OPT {REGISTER,KEY,ORDER,CANCEL,HISTORY,MOVIES,MOVIE,LOCATIONS,LOCATION };
-
+	enum OPT {REGISTER,KEY,ORDER,CANCEL,HISTORY,MOVIES,LOCATIONS };
+	enum SUBOPT {BY_ID,BY_TITLE,BY_COUNTRY,BY_CITY};
 	//Database Management:
-	static string getKey(string username, string password);
+	static string getKey(string , string );
 
 	//Account management
-	static void registerAccount(string username, string password);
-	static void recoverKey(string username, string password);
-	static void getHistory(string key);
+	static void registerAccount(string , string );
+	static void recoverKey(string , string );
+	static void getHistory(string );
 
 	////Ticket Management
 	static void orderTicket(string orderID, string key);
@@ -27,12 +27,12 @@ private:
 	////Information
 	static void getMoviesList();
 	static void getLocationsList();
-	static void getMovieInfo(string movieID);
-	static void getLocationInfo(string locationName);
+	static void getMovieInfo(string , int);
+	static void getLocationInfo(string, int);
 
 	//Parser
-	static bool  parseOneParam(string stringToParse, string param, string &var);
-	static bool  parseTwoParam(string stringToParse, string param1, string param2, string &var1, string &var2);
+	static bool  parseOneParam(string , string , string&);
+	static bool  parseTwoParam(string , string , string , string&, string&);
 
 public:
 	static void parse(const char* stringToParse);
