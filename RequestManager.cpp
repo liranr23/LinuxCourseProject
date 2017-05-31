@@ -45,7 +45,7 @@ bool  RequestManager::parseTwoParam(string stringToParse, string param1, string 
 
 string RequestManager::registerAccount(string username, string password){
 	//Here user will be registered to the DB if doesn't exist, returns JSON:
-	return "{\"key\":\"3x4mpl3k3y\",\"status\":\"success\"}";
+	return "{\"key\"\:\"3x4mpl3k3y\",\"status\":\"success\"}";
 };
 
 string RequestManager::getKey(string username, string password){
@@ -57,7 +57,7 @@ string RequestManager::recoverKey(string username, string password){
 	//Here user will be checked and his key will be returned
 	string key = getKey(username, password);
 
-	return "{\"key\:\"" + key + "\",\"status\":\"success\"}";
+	return "{\"key\"\:\"" + key + "\",\"status\":\"success\"}";
 }
 
 string RequestManager::getHistory(string key){
@@ -68,7 +68,7 @@ string RequestManager::getHistory(string key){
 
 string RequestManager::orderTicket(string orderID, string key){
 
-	return "Ticket Ordered " + orderID + ": " + key;
+	return "{\"OrderID\"\:\"" + orderID + "\",\"status\":\"success\"}";
 };
 
 string RequestManager::cancelTicket(string ticketID,string key){
@@ -78,10 +78,11 @@ string RequestManager::cancelTicket(string ticketID,string key){
 
 string RequestManager::getMoviesList(){
 	//Movies will be fetched from the db instead: TODO
-	Movie m1("1", "check", "me", "2017", "just a movie", "http:www.imdb.com/check");
-        Movie m2("2", "check2", "meeeee", "2017", "just a movie2", "http:www.imdb.com/check2");
+	Movie m1("1", "Spiderman", "me", "2017", "just a movie", "http:www.imdb.com/check");
+    Movie m2("2", "Superman", "meeeee", "2017", "just a movie2", "http:www.imdb.com/check2");
+	Movie m3("3", "Batman", "meeeee", "2017", "just a movie2", "http:www.imdb.com/check2");
 	
-	return "{\"status\":\"success\",\"movies\":[" + m1.ToJson() +"," + m2.ToJson() + "]}";
+	return "{\"status\":\"success\",\"movies\":[" + m1.ToJson() +"," + m2.ToJson() + "," + m3.ToJson() +"]}";
 };
 
 string RequestManager::getLocationsList(){
@@ -89,8 +90,8 @@ string RequestManager::getLocationsList(){
 	Location l1("Israel","Tel Aviv");
 	Location l2("USA", "NYC");
 
-	Movie m1("1", "check", "me", "2017", "just a movie", "http:www.imdb.com/check");
-        Movie m2("2", "check2", "meeeee", "2017", "just a movie2", "http:www.imdb.com/check2");
+	Movie m1("1", "Spiderman", "me", "2017", "just a movie", "http:www.imdb.com/check");
+    Movie m2("2", "Superman", "meeeee", "2017", "just a movie2", "http:www.imdb.com/check2");
 	
 	l1.addMovie(m1);
 	l1.addMovie(m2);
