@@ -47,9 +47,9 @@ Using HTTP Get Requests:
 - localhost/Locations/
 
 ### Returns information about a specific location
-- localhost/id=LOCATIONID
-- localhost/city=LOCATIONCITY
-- localhost/country=LOCATIONCOUNTRY
+- localhost/Location/ID=LOCATIONID
+- localhost/Location/city=LOCATIONCITY
+- localhost/Location/country=LOCATIONCOUNTRY
 
 ### Returns information about a specific movie
 - localhost/Movie/ID=MOVIEID
