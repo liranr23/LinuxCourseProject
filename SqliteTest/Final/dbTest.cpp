@@ -1,13 +1,15 @@
+#include "RequestManager.h"
 #include "database.h"
-#include <iostream>
 #include <string>
-#include "Movie.h"
+
 
 
 using namespace std;
 
 int main (int argc, char* argv[]){
-    Database db;
-    db.selectAllMoviesQuery();
+    //RequestManager::parse("/Movies/");
+    //RequestManager::parse("/Locations/");
+    //RequestManager::parse("/Location/city=Tel Aviv");
+    // RequestManager::parse("/Movie/ID=2");
     return 0;
 }
