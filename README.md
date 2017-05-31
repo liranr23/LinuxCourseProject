@@ -3,18 +3,26 @@
 ## Make sure you install the relevant tools:
 
 ### Fast CGI:
-- sudo apt-get install libfcgi-dev
-- sudo apt-get install spawn-fcgi
+```bash
+sudo apt-get install libfcgi-dev
+sudo apt-get install spawn-fcgi
+```
 
 ## Nginx
-- sudo apt-get install nginx
+```bash
+sudo apt-get install nginx
+```
 
-## For Script
-- sudo apt-get install curl
+## For Client script
+```bash
+sudo apt-get install curl
+```
 
 ## Sqlite3
-- sudo apt-get install sqlite3  (On some flavors installed by default eg; Ubuntu 16.04)
-- sudo apt-get install libsqlite3-dev
+```bash
+sudo apt-get install sqlite3  (On some flavors installed by default eg; Ubuntu 16.04)
+sudo apt-get install libsqlite3-dev
+```
 
 
 
@@ -22,36 +30,98 @@
 
 Using HTTP Get Requests:
 
-### Registers a new user with the username and password passed if possible
-- Register:   Localhost/Register/username="USERNAME"&password="PASSWORD"
+#### Registers a new user with the username and password passed if possible
+```browser
+localhost/Register/username=<USERNAME>&password=<PASSWORD>
+```
+Response:
+```json
+{"key":"3X4MPL3K3Y" , "status": "success"}
+```
 
-### Returns user's key
-- RecoverKey: Localhost/RecoverKey/username="USERNAME"&password="PASSWORD"
+#### Returns user's key
+```browser
+localhost/RecoverKey/username=<USERNAME>&password=<PASSWORD>
+```
 
+Response:
+```json
+{"key":"3X4MPL3K3Y" , "status": "success"}
+```
 
-### Orders a ticket for a movie at a location (represented by orderID) [Returns ticket id]
-- Order:      Localhost/Order/id="orderID"&key="userKey"
-
-
-### Cancel a ticket (before the screening)
-- Cancel:     Localhost/Cancel/id="ticketID"&key="userKey"
-
-### Returns tickets order history [Shows tickets ids too] :
-- History:    Localhost/History/key="userKey"
-
-
-### Lists all the movies in all the theaters
-- Movies:     Localhost/Movies/
-
-### Lists all the locations of the theaters
-- Locations:  Localhost/Locations/
-
-### Lists all the movies at a location
-- Movies at a location: Localhost/Location/Movies/
-
-### Returns information about a specific movie
-- Movie info:  Localhost/Movie/ID="movieID"
+#### Orders a ticket for a movie at a location (represented by orderID) [Returns ticket id]
+```browser
+localhost/Order/key=<USERKEY>&movieID=<MOVIEID>&locationID=<LOCATIONID>
+```
 
 
 
+#### Returns tickets order history:
+```browser
+localhost/History/key=<USERKEY>
+```
+
+
+#### Cancel a ticket
+
+```browser
+localhost/Cancel/id=<ORDERID>&key=<USERKEY>
+```
+
+#### Lists Movies information (empty for all movies):
+
+```browser
+localhost/Movies/
+localhost/Movies/ID=<MOVIEID>
+localhost/Movies/name=<MOVIENAME>
+
+```
+Response:
+```json
+{"status":"success","movies":[{
+                "id":"1",
+                "title":"THOR",
+                "producer":"MARVEL",
+                "year":"2015",
+                "info":"A MOVIE ABOUT SOMEONE WITH A HAMMER",
+                "link":"thor.io"
+        },{
+                "id":"2",
+                "title":"SPIDERMAN HOMECOMING",
+                "producer":"MARVEL",
+                "year":"2017",
+                "info":"A MOVIE ABOUT SPIDERMAN JUST WITH A NEW ACTOR",
+                "link":"SMHC.io"
+        },{
+                "id":"3",
+                "title":"THE DARK KNIGHT",
+                "producer":"DC",
+                "year":"2014",
+                "info":"A MOVIE ABOUT SOMEONE WITH MONEY AND TIME",
+                "link":"BATMAN.io"
+        }]}
+```
+
+#### Lists locations information (empty for all locations)
+```browser
+localhost/Locations/
+localhost/Locations/ID=<LOCATIONID>
+localhost/Locations/city=<LOCATIONCITY>
+localhost/Locations/country=<LOCATIONCOUNTRY>
+```
+
+Response:
+```json
+{"status":"success","locations":[{
+        "country":"Israel",
+        "city":"Tel Aviv",
+        "Movies":[
+
+]},{
+        "country":"Israel",
+        "city":"Beer Sheva",
+        "Movies":[
+
+]}]}
+```
 ## Interface
