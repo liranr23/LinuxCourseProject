@@ -50,7 +50,7 @@ Response:
 ```
 
 #### Orders a ticket for a movie at a location (represented by orderID) [Returns ticket id]
-```
+```browser
 - localhost/Order/key=<USERKEY>&movieID=<MOVIEID>&locationID=<LOCATIONID>
 ```
 
@@ -61,9 +61,9 @@ Response:
 - localhost/History/key=<USERKEY>
 ```
 
+#### Cancel a ticket
 
 #### Lists Movies information (empty for all movies):
-#### Cancel a ticket
 ```
 - localhost/Cancel/id=<ORDERID>&key=<USERKEY>
 ```
