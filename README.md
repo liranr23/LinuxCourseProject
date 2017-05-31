@@ -75,7 +75,28 @@ Response:
 ```
 Response:
 ```json
-{status: success , movies[{},...]}
+{"status":"success","movies":[{
+                "id":"1",
+                "title":"THOR",
+                "producer":"MARVEL",
+                "year":"2015",
+                "info":"A MOVIE ABOUT SOMEONE WITH A HAMMER",
+                "link":"thor.io"
+        },{
+                "id":"2",
+                "title":"SPIDERMAN HOMECOMING",
+                "producer":"MARVEL",
+                "year":"2017",
+                "info":"A MOVIE ABOUT SPIDERMAN JUST WITH A NEW ACTOR",
+                "link":"SMHC.io"
+        },{
+                "id":"3",
+                "title":"THE DARK KNIGHT",
+                "producer":"DC",
+                "year":"2014",
+                "info":"A MOVIE ABOUT SOMEONE WITH MONEY AND TIME",
+                "link":"BATMAN.io"
+        }]}
 ```
 
 #### Lists locations information (empty for all locations)
@@ -86,4 +107,18 @@ Response:
 - localhost/Locations/country=<LOCATIONCOUNTRY>
 ```
 
+Response:
+```json
+{"status":"success","locations":[{
+        "country":"Israel",
+        "city":"Tel Aviv",
+        "Movies":[
+
+]},{
+        "country":"Israel",
+        "city":"Beer Sheva",
+        "Movies":[
+
+]}]}
+```
 ## Interface
