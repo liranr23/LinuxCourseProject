@@ -21,4 +21,5 @@ string Location::ToJson()const {
 }
 void Location::addMovie(Movie m) {
 	movies.push_back(m);
+	
 }
