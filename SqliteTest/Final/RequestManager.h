@@ -13,8 +13,7 @@ private:
 
 	enum OPT {REGISTER,KEY,ORDER,CANCEL,HISTORY,MOVIES,LOCATIONS };
 	enum SUBOPT {BY_ID,BY_TITLE,BY_COUNTRY,BY_CITY};
-	//Database Management:
-	static string getKey(string , string );
+
 
 	//Account management
 	static void registerAccount(string , string );

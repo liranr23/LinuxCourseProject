@@ -27,7 +27,7 @@ bool  RequestManager::parseTwoParam(string stringToParse, string param1, string 
 	if (delimIndex == -1) return false;
 	 
 	var1 = stringToParse.substr(param1.length() + 1, delimIndex - (param1.length() +1));
-	var2 = stringToParse.substr(delimIndex + param2.length() +1);
+	var2 = stringToParse.substr(delimIndex + param2.length() +2);
 
 	return true;
 };
@@ -39,16 +39,10 @@ void RequestManager::registerAccount(string username, string password){
 	cout <<  "{\"key\":\"3x4mpl3k3y\",\"status\":\"success\"}";
 };
 
-string RequestManager::getKey(string username, string password){
-	//Gets the key from the database for a user:
-	return "3x4mple3k3y";
-}
-
 void RequestManager::recoverKey(string username, string password){
 	//Here user will be checked and his key will be returned
-	string key = getKey(username, password);
-
-	cout << "{\"key\:\"" + key + "\",\"status\":\"success\"}";
+	Database db;
+	db.selectKey(username,password);
 }
 
 void RequestManager::getHistory(string key){

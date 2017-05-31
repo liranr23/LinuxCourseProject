@@ -27,6 +27,7 @@ class Database{
 
     static int moviesCallback(void*, int , char**, char**);
     static int locationsCallback(void*, int , char**, char**);
+    static int keyCallback(void*, int , char**, char**);
 
     void selectAllMoviesQuery();
     void selectAllLocationsQuery();
@@ -37,6 +38,8 @@ class Database{
     void selectLocationByCity(string);
     void selectLocationByCountry(string);
     void selectLocationByID(string);
+
+    void selectKey(string,string);
 
     static int counter;
     static int selectCounter;

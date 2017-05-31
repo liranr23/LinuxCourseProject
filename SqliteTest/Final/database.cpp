@@ -21,7 +21,7 @@ Database::~Database(){
 
 
 int Database::countCallback(void *data , int argc, char** argv , char** movieCols){
-    counter++;
+    if(argv[0]) counter++;
     return 0;
 }
 
@@ -57,6 +57,13 @@ int Database::locationsCallback(void *data, int argc, char **argv, char **movieC
     return 0;
 };
 
+int Database::keyCallback(void* data, int argc , char** argv, char** keyCol){
+    string key = argv[0];
+
+    cout << "\"" <<  key << "\"";
+    
+    return 1; //Force no more than one key for a user
+};
 
 void Database::selectAllMoviesQuery(){
     
@@ -151,3 +158,17 @@ void Database::selectLocationByID(string locationID){
 
     if( rc != SQLITE_OK ) sqlite3_free(errMsg);
 }
+
+void Database::selectKey(string username, string password){
+    counter = selectCounter = 0;
+    string query = "SELECT KEY FROM USERS WHERE NAME = '" + username + "' AND PASSWORD = '" + password + "';";
+    rc = sqlite3_exec(dbFile, query.c_str() , countCallback, (void*)data, &errMsg);
+    if (!counter) cout << "{\"status\":\"failure\",\"message\":\"User does not exist\"}";
+
+    else {
+            cout << "{\"status\":\"success\",\"key\":";
+            rc = sqlite3_exec(dbFile, query.c_str() , keyCallback, (void*)data, &errMsg);
+            cout << "}";
+    }
+    if( rc != SQLITE_OK ) sqlite3_free(errMsg);
+};
