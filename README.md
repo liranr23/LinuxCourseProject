@@ -3,23 +3,23 @@
 ## Make sure you install the relevant tools:
 
 ### Fast CGI:
-```
+```bash
 - sudo apt-get install libfcgi-dev
 - sudo apt-get install spawn-fcgi
 ```
 
 ## Nginx
-```
+```bash
 - sudo apt-get install nginx
 ```
 
 ## For Client script
-```
+```bash
 - sudo apt-get install curl
 ```
 
 ## Sqlite3
-```
+```bash
 - sudo apt-get install sqlite3  (On some flavors installed by default eg; Ubuntu 16.04)
 - sudo apt-get install libsqlite3-dev
 ```
@@ -31,7 +31,7 @@
 Using HTTP Get Requests:
 
 #### Registers a new user with the username and password passed if possible
-```
+```browser
 - localhost/Register/username=<USERNAME>&password=<PASSWORD>
 ```
 Response:
@@ -40,7 +40,7 @@ Response:
 ```
 
 #### Returns user's key
-```
+```browser
 - localhost/RecoverKey/username=<USERNAME>&password=<PASSWORD>
 ```
 
@@ -57,17 +57,20 @@ Response:
 
 
 #### Returns tickets order history:
-```
+```browser
 - localhost/History/key=<USERKEY>
 ```
 
+
 #### Cancel a ticket
 
-#### Lists Movies information (empty for all movies):
-```
+```browser
 - localhost/Cancel/id=<ORDERID>&key=<USERKEY>
 ```
-```
+
+#### Lists Movies information (empty for all movies):
+
+```browser
 - localhost/Movies/
 - localhost/Movies/ID=<MOVIEID>
 - localhost/Movies/name=<MOVIENAME>
@@ -100,7 +103,7 @@ Response:
 ```
 
 #### Lists locations information (empty for all locations)
-```
+```browser
 - localhost/Locations/
 - localhost/Locations/ID=<LOCATIONID>
 - localhost/Locations/city=<LOCATIONCITY>
