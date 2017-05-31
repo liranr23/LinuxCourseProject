@@ -57,7 +57,7 @@ string RequestManager::recoverKey(string username, string password){
 	//Here user will be checked and his key will be returned
 	string key = getKey(username, password);
 
-	return "{\"key\:\"" + key + "\",\"status\":\"success\"}";
+	return "{\"key\"\:\"" + key + "\",\"status\":\"success\"}";
 }
 
 string RequestManager::getHistory(string key){
