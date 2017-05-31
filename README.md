@@ -43,16 +43,16 @@ Using HTTP Get Requests:
 
 #### Orders a ticket for a movie at a location (represented by orderID) [Returns ticket id]
 ```
-- localhost/Order/id=<ORDERID>&key=<USERKEY>
+- localhost/Order/key=<USERKEY>&movieID=<MOVIEID>&locationID=<LOCATIONID>
 ```
 
 
-#### Cancel a ticket (before the screening)
+#### Cancel a ticket
 ```
-- localhost/Cancel/id=<TICKETID>&key=<USERKEY>
+- localhost/Cancel/id=<ORDERID>&key=<USERKEY>
 ```
 
-#### Returns tickets order history [Shows tickets ids too] :
+#### Returns tickets order history:
 ```
 - localhost/History/key=<USERKEY>
 ```
