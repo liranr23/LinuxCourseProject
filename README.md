@@ -32,7 +32,7 @@ Using HTTP Get Requests:
 
 #### Registers a new user with the username and password passed if possible
 ```browser
-- localhost/Register/username=<USERNAME>&password=<PASSWORD>
+localhost/Register/username=<USERNAME>&password=<PASSWORD>
 ```
 Response:
 ```json
@@ -41,7 +41,7 @@ Response:
 
 #### Returns user's key
 ```browser
-- localhost/RecoverKey/username=<USERNAME>&password=<PASSWORD>
+localhost/RecoverKey/username=<USERNAME>&password=<PASSWORD>
 ```
 
 Response:
@@ -51,29 +51,29 @@ Response:
 
 #### Orders a ticket for a movie at a location (represented by orderID) [Returns ticket id]
 ```browser
-- localhost/Order/key=<USERKEY>&movieID=<MOVIEID>&locationID=<LOCATIONID>
+localhost/Order/key=<USERKEY>&movieID=<MOVIEID>&locationID=<LOCATIONID>
 ```
 
 
 
 #### Returns tickets order history:
 ```browser
-- localhost/History/key=<USERKEY>
+localhost/History/key=<USERKEY>
 ```
 
 
 #### Cancel a ticket
 
 ```browser
-- localhost/Cancel/id=<ORDERID>&key=<USERKEY>
+localhost/Cancel/id=<ORDERID>&key=<USERKEY>
 ```
 
 #### Lists Movies information (empty for all movies):
 
 ```browser
-- localhost/Movies/
-- localhost/Movies/ID=<MOVIEID>
-- localhost/Movies/name=<MOVIENAME>
+localhost/Movies/
+localhost/Movies/ID=<MOVIEID>
+localhost/Movies/name=<MOVIENAME>
 
 ```
 Response:
@@ -104,10 +104,10 @@ Response:
 
 #### Lists locations information (empty for all locations)
 ```browser
-- localhost/Locations/
-- localhost/Locations/ID=<LOCATIONID>
-- localhost/Locations/city=<LOCATIONCITY>
-- localhost/Locations/country=<LOCATIONCOUNTRY>
+localhost/Locations/
+localhost/Locations/ID=<LOCATIONID>
+localhost/Locations/city=<LOCATIONCITY>
+localhost/Locations/country=<LOCATIONCOUNTRY>
 ```
 
 Response:
