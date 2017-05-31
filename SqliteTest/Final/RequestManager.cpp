@@ -142,37 +142,47 @@ void RequestManager::parse(const char* stringToParse){
 		if (index == 0){ parsedString = parsedString.substr(options[i].length());found= true; break; }
 	}
 	
-	if (found)
+	if (!found) {
+		cout<< defaultResponse;
+		return;
+	}
 
 	switch (option){
 	case REGISTER:
 
 		if (parseTwoParam(parsedString, "username","password",user,pass))
 			registerAccount(user, pass);
+		else cout << defaultResponse;
 		break;
 
 	case KEY:
 
 		if (parseTwoParam(parsedString, "username", "password",user,pass))
 			recoverKey(user, pass);
+		else cout << defaultResponse;
 		break;
 
 	case ORDER:
 
 		if (parseTwoParam(parsedString, "orderID", "key",orderID,key))
 			orderTicket(orderID,key);
+		else cout << defaultResponse;
 		break;
 
 	case CANCEL:
 
-		if (parseTwoParam(parsedString, "ticketID", "key", ticketID, key));
+		if (parseTwoParam(parsedString, "ticketID", "key", ticketID, key))
 			cancelTicket(ticketID,key);
+		else cout << defaultResponse;
+
 		break;
 
 	case HISTORY:
 
 		if (parseOneParam(parsedString, "key",key))
 			getHistory(key);
+		else cout << defaultResponse;
+
 		break;
 
 
@@ -184,6 +194,7 @@ void RequestManager::parse(const char* stringToParse){
 			getMovieInfo(movieID,BY_ID);
 		else if (parseOneParam(parsedString, "title",movieName))
 			getMovieInfo(movieName,BY_TITLE);
+		else cout << defaultResponse;
 		break;
 
 
@@ -197,12 +208,12 @@ void RequestManager::parse(const char* stringToParse){
 			getLocationInfo(country,BY_COUNTRY);
 		else if(parseOneParam(parsedString,"ID",locationID))
 			getLocationInfo(locationID,BY_ID);
-
-		
+		else cout << defaultResponse;
 		break;
 
 	default:
 		cout << defaultResponse;
 	}
+	
 	
 }
