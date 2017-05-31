@@ -1,6 +1,7 @@
-#include <iostream>
-#include <string>
-#include <string.h>
+#ifndef REQUESTMANAGER_H
+#define REQUESTMANAGER_H
+
+#include "database.h"
 
 using namespace std;
 
@@ -38,3 +39,4 @@ public:
 	static void parse(const char* stringToParse);
 };
 
+#endif

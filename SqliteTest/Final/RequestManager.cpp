@@ -1,11 +1,4 @@
 #include "RequestManager.h"
-#include <iostream>
-#include <string>
-#include <string.h>
-#include "Movie.h"
-#include "User.h"
-#include "Location.h"
-#include "database.h"
 
 using namespace std;
 

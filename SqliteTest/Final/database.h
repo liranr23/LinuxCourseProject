@@ -1,6 +1,9 @@
+#ifndef DATABASE_H
+#define DATABASE_H
+
 #include <sqlite3.h>
-#include <string>
-#include <list>
+#include <stdlib.h>
+#include "Location.h"
 #include "Movie.h"
 
 using namespace std; 
@@ -37,5 +40,6 @@ class Database{
 
     static int counter;
     static int selectCounter;
-    //static list<Movie> movies;
 };
+
+#endif

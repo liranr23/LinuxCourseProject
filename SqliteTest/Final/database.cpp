@@ -1,11 +1,5 @@
 #include "database.h"
-#include <stdlib.h>
-#include <iostream>
-#include <sqlite3.h>
-#include <string>
-#include <list>
-#include "Movie.h"
-#include "Location.h"
+
 
 using namespace std;
 
