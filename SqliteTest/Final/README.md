@@ -1,7 +1,7 @@
 #### Author: Jonathan Leon
 
 To Compile:
-run initDB.sh
+run restoreDB.sh
 
 OR
 
