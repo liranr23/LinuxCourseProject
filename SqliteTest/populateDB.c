@@ -47,10 +47,10 @@ int main(int argc, char* argv[])
 	 "(1,'Israel','Tel Aviv','HaMasger 2')," \
 	 "(2,'Israel','Beer Sheva','Mesada 10');"\
 
-	 "INSERT INTO ORDERS (ORDERID,MOVIEID,LOCATIONID,USERKEY) "  \
+	 "INSERT INTO ORDERS (MOVIEID,LOCATIONID,USERKEY) "  \
          "VALUES " \
-	 "(1,1,1,'WO1V3RK3YDCBA4321')," \
-	 "(2,2,2,'WO1V3RK3YDCBA4321');";
+	 "(1,1,'WO1V3RK3YDCBA4321')," \
+	 "(2,2,'WO1V3RK3YDCBA4321');";
 
    /* Execute SQL statement */
    rc = sqlite3_exec(db, sql, callback, 0, &zErrMsg);

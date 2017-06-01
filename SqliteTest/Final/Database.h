@@ -34,7 +34,8 @@ class Database{
     static int moviesCallback(void*, int , char**, char**);
     static int locationsCallback(void*, int , char**, char**);
     static int keyCallback(void*, int , char**, char**);
-
+    static int ordersCallback(void*, int , char** , char**);
+    
     void selectAllMoviesQuery();
     void selectAllLocationsQuery();
 
@@ -48,7 +49,8 @@ class Database{
     void selectKey(string,string);
     void createAccount(string,string);
 
-
+    void selectOrdersByKey(string);
+    void createOrder(string,string,string);
 
 };
 

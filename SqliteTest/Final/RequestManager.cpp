@@ -48,8 +48,8 @@ void RequestManager::recoverKey(string username, string password){
 
 void RequestManager::getHistory(string key){
 	//User will be taken from the database using the key, his order history will be returned
-
-	cout << "{\"Orders\":[{\"OrderID\:\"1\"}],\"status\":\"success\"}";
+	Database db;
+	db.selectOrdersByKey(key);
 };
 
 void RequestManager::orderTicket(string orderID, string key){

@@ -1,4 +1,4 @@
-#include "database.h"
+#include "Database.h"
 
 using namespace std;
 
@@ -67,6 +67,25 @@ int Database::keyCallback(void *data, int argc, char **argv, char **keyCol)
     cout << "\"" << key << "\"";
 
     return 1; //Force no more than one key for a user
+};
+
+int Database::ordersCallback(void *data, int argc, char **argv, char **keyCol)
+{
+    string 
+        orderID = argv[0],
+        movieID = argv[1],
+        locationID = argv[2],
+        canceled = argv[3],
+        key = argv[4];
+
+    //TODO: Use Order Object
+    cout << "Order ID: " << orderID 
+            << " Movie ID: " << movieID 
+            << " Location ID:" << locationID
+            << " Canceled: " << canceled
+            << " User Key: " << key << endl;
+
+    return 0;
 };
 
 void Database::selectAllMoviesQuery()
@@ -224,4 +243,44 @@ void Database::createAccount(string username, string password)
         else
             sqlite3_free(errMsg);
     }
+}
+
+void Database::selectOrdersByKey(string key){
+    counter = selectCounter = 0;
+    string query = "SELECT * FROM ORDERS WHERE USERKEY = '" + key + "'";
+    rc = sqlite3_exec(dbFile, query.c_str(), countCallback, (void *)data, &errMsg);
+   
+    //cout << "{\"status\":\"success\",\"key\":";
+    rc = sqlite3_exec(dbFile, query.c_str(), ordersCallback, (void *)data, &errMsg);
+    //cout << "}";
+    
+    if (rc != SQLITE_OK)
+        sqlite3_free(errMsg);
+}
+
+void Database::createOrder(string key, string movieID, string locationID){
+    counter = selectCounter = 0;
+    //Checking Movie exists:
+    string  
+    queryCheckMovie = "SELECT ID FROM MOVIES WHERE ID = " + movieID + ";",
+    queryCheckLocation = "SELECT ID FROM LOCATIONS WHERE ID = " + locationID + ";",
+    query = "INSERT INTO ORDERS(MOVIEID,LOCATIONID,USERKEY)VALUES('";
+    query += movieID;
+    query += ",";
+    query += locationID;
+    query += ",'";
+    query += key;
+    query += "');";    
+
+    rc = sqlite3_exec(dbFile, queryCheckMovie.c_str(), countCallback, (void *)data, &errMsg);
+    if (counter == 0){ cout << "{\"status\":\"failure\",\"message\":\"Movie does not exist!\"}"; return; }
+    counter = 0;
+
+    rc = sqlite3_exec(dbFile, queryCheckLocation.c_str(), countCallback, (void *)data, &errMsg);
+    if (counter == 0){ cout << "{\"status\":\"failure\",\"message\":\"Location does not exist!\"}"; return; }
+    
+
+    rc = sqlite3_exec(dbFile, query.c_str(), countCallback, (void *)data, &errMsg);
+
+    cout << "Tickets successfuly ordered"; //TEMPORARY , WILL USE ORDER INSTEAD
 }

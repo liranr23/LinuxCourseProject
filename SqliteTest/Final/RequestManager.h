@@ -1,7 +1,7 @@
 #ifndef REQUESTMANAGER_H
 #define REQUESTMANAGER_H
 
-#include "database.h"
+#include "Database.h"
 
 using namespace std;
 
