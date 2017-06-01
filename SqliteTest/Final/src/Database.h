@@ -11,7 +11,7 @@ using namespace std;
 class Database{
 
     private:
-    const char* FILENAME = "database.db";
+    const char* FILENAME = "../db/database.db";
     sqlite3* dbFile;
     char* errMsg = 0;
     int rc;
