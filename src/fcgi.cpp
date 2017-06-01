@@ -32,7 +32,7 @@ int main(void) {
 
         cout << "Content-type: text/plain\r\n"
 	     << "\r\n";
-	RequestManager::parse(uri);
+	    RequestManager::parse(uri);
 	cout <<"\n";
     }
 

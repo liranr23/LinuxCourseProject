@@ -5,8 +5,5 @@ sudo cp /etc/nginx/nginx.conf /etc/nginx/nginx.conf.bak && sudo rm /etc/nginx/ng
 sudo cp ./nginx.conf /etc/nginx/
 
 sudo nginx
-#g++ testcgi.cpp -lfcgi++ -lfcgi -o testcgi
-g++ *.cpp -std=c++11 -I/usr/local/include -lfcgi -lfcgi++ -o testcgi
 
-
-spawn-fcgi -p 8000 testcgi
+spawn-fcgi -p 8000 fcgi
