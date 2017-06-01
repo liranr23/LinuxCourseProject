@@ -31,22 +31,28 @@ int main(int argc, char* argv[])
    }
 
    /* Create SQL statement */
-   sql = "CREATE TABLE MOVIES("  \
+   sql = "CREATE TABLE MOVIES("\
          "ID		INT 	PRIMARY KEY     NOT NULL,"\
          "TITLE         VARCHAR(50)    		NOT NULL,"\
          "PRODUCER      VARCHAR(50)    		NOT NULL,"\
          "YEAR          INT 			NOT NULL,"\
          "INFO		VARCHAR(200) 		NOT NULL,"\
-         "LINK		VARCHAR(50) 		NOT NULL);"\ 
-	 "CREATE TABLE LOCATIONS("  \
+         "LINK		VARCHAR(50) 		NOT NULL);"\
+	 "CREATE TABLE LOCATIONS("\
          "ID		INT	PRIMARY KEY	NOT NULL,"\
          "COUNTRY       VARCHAR(50)		NOT NULL,"\
          "CITY      	VARCHAR(50)    		NOT NULL,"\
 	 "ADDRESS	VARCHAR(50) 		NOT NULL);"\
-	 "CREATE TABLE USERS(" \
+	 "CREATE TABLE USERS("\
 	 "KEY		VARCHAR(50) PRIMARY KEY NOT NULL,"\
 	 "NAME		VARCHAR(50)		NOT NULL,"\
-	 "PASSWORD	VARCHAR(50)		NOT NULL);";
+	 "PASSWORD	VARCHAR(50)		NOT NULL);"\
+	 "CREATE TABLE ORDERS("\
+	 "ORDERID	INT	PRIMARY KEY	NOT NULL,"\
+	 "MOVIEID	INT			NOT NULL,"\
+	 "LOCATIONID	INT			NOT NULL,"\
+	 "CANCELED	BIT	DEFAULT 0	NOT NULL,"\
+	 "USERKEY	VARCHAR(50)		NOT NULL);";
 
    /* Execute SQL statement */
    rc = sqlite3_exec(db, sql, callback, 0, &zErrMsg);
