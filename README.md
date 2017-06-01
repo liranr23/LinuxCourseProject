@@ -1,5 +1,10 @@
 # Linux Environment Project
-
+## To Run:
+```bash
+$cd src
+$./compile.sh
+$./run.sh
+```
 ## Make sure you install the relevant tools:
 
 ### Fast CGI:
