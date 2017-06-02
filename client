@@ -3,20 +3,23 @@ set -e
 OPT=$(getopt -n "cf-dns" -o "h,v" -l "help,version,register:,movies,order:,history,cancel:,recoverKey:,userkey:,locations,movieID:,movieName:,theaterID:,city:,country:" -- "$@")
 
 eval set -- "$OPT"
-hF=0
-vF=0
+#flags
 registerF=0
 moviesF=0
 orderF=0
 historyF=0
 cancelF=0
 restoreF=0
-username=""
-password=""
 locationsF=0
 movieInfoF=0
+#default values
+username=""
+password=""
 userKey=$GLOBAL_USER_KEY
+# decoration
 format="%3s | %-12s | %-15s | %-50s\n"		#format for output
+#server address link
+server_address="http://localhost"
 
 # check correct format of credentials i.ex : username:password
 function check_creds(){
@@ -33,20 +36,69 @@ function check_creds(){
 		fi
 		# check not empty credentials
 		if [ -z "$password" ] || [ -z "$username" ];then
-			echo "client : Username and pussword can not be empty!"
-		
+			echo "client : Username and pussword can not be empty!"	
 			exit 1
 		fi
 }
 
 
+#version
+function versionShow(){
+	echo -e "Linux environment programming: \n\nVersion 1.0\n
+Authors:\n-----------------------\nLiran Rotenberg\nJohnatan Leon\nIsabelle Meif\nAlexey Silyuk\n"
+	exit
+}
+
+#Synopsis
+function help(){
+	echo "Movie tickets ordering system :
+	
+	./client -h :	this synopsis
+	./client -v :	version with authors names
+	
+	Register to system:
+		./client --register username:password
+	
+	Recover lost userkey:
+		./client --recoverKey <USERNAME>:<PASSWORD>
+	
+	View movies :
+		All movies:
+			./client --movies
+	
+		By ID:
+			./client --movieID <MOVIEID>
+		
+		By Name (or part of name,prefix):
+			./client --movieName \"MOVIE NAME\"
+			
+	View locations:
+		All without filtering:
+			./client --locations
+		
+		By ID:
+			./client --locationID <ID>
+		
+		By Country:
+			./client --locations --country <COUNTRY>, may be used country prefix
+		
+		By City:
+			./client --locations --city <CITY> , may be used city prefix
+			
+	Ordering :
+		UNDER CONSTRUCTION
+	
+	"
+    exit
+}
+
 while [ "$1" != "--" ]; do
     case "$1" in
     -h|--help)
-            hF=1
+            help
             ;;
 	-v|--version)
-            vF=1
+            versionShow
             ;;
     --register)
             register_credentials="$2"
@@ -122,49 +174,6 @@ if ! [ -z "$2" ]; then
 	exit 1
 fi
 
-#version
-if [ "$vF" -eq 1 ];then
-echo "Linux project version 1.0"
-fi
-
-
-# Synopsis
-if [ "$hF" -eq 1 ];then
-echo "Movie ordering system :
-	./client -h :	this synopsis
-	
-	Register to system:
-		./client --register username:password
-	
-	Recover lost userkey:
-		./client --recoverKey <USERNAME>:<PASSWORD>
-	
-	View movies :
-		All movies:
-			./client --movies
-	
-		By ID:
-			./client --movieID <MOVIEID>
-		
-		By Name (or part of name,prefix):
-			./client --movieName \"MOVIE NAME\"
-			
-	View locations:
-		All without filtering:
-			./client --locations
-		
-		By ID:
-			./client --locationID <ID>
-		
-		By Country:
-			./client --locations --country <COUNTRY>, may be used country prefix
-		
-		By City:
-			./client --locations --city <CITY> , may be used city prefix
-	
-	"
-    exit
-fi
 
 # Register
 if [ "$registerF" == 1 ]; then
