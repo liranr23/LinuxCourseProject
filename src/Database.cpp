@@ -134,7 +134,7 @@ void Database::selectMovieByID(string movieID)
 void Database::selectMovieByTitle(string movieTitle)
 {
     counter = selectCounter = 0;
-    string query = "SELECT * FROM MOVIES WHERE TITLE LIKE '%" + movieTitle + "%'";
+    string query = "SELECT * FROM MOVIES WHERE TITLE LIKE '" + movieTitle + "%'";
 
     rc = sqlite3_exec(dbFile, query.c_str(), countCallback, (void *)data, &errMsg);
 
@@ -149,7 +149,7 @@ void Database::selectMovieByTitle(string movieTitle)
 void Database::selectLocationByCity(string cityName)
 {
     counter = selectCounter = 0;
-    string query = "SELECT * FROM LOCATIONS WHERE CITY = '" + cityName + "'";
+    string query = "SELECT * FROM LOCATIONS WHERE CITY LIKE '" + cityName + "%'";
 
     rc = sqlite3_exec(dbFile, query.c_str(), countCallback, (void *)data, &errMsg);
 
@@ -164,7 +164,7 @@ void Database::selectLocationByCity(string cityName)
 void Database::selectLocationByCountry(string countryName)
 {
     counter = selectCounter = 0;
-    string query = "SELECT * FROM LOCATIONS WHERE COUNTRY = '" + countryName + "'";
+    string query = "SELECT * FROM LOCATIONS WHERE COUNTRY LIKE '" + countryName + "%'";
 
     rc = sqlite3_exec(dbFile, query.c_str(), countCallback, (void *)data, &errMsg);
 
