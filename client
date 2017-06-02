@@ -155,7 +155,8 @@ if [ "$moviesF" == 1 ]; then
 	movies_list="$(curl -s "http://localhost/Movies/")"
 	if [ $(jq -r ".status" <<< "$movies_list") == "success" ]; then
 	
-	length="$(curl -s "http://localhost/Movies/" | jq length)"
+	length="$(curl -s "http://localhost/Movies/" |jq .movies | jq length)"
+	echo $length
 	format="%-3s| %-6s | %-50s\n"		#format for output
 	printf "\nFull Movies list :\n-------------------------\n$format--------------------------------------------------------\n" "ID" "Year" "Movie title"
 		for i in `seq 0 $length`;
@@ -247,15 +248,17 @@ function printMoviesbyID(){
 		responce=$(curl -s http://localhost/Movies/ID="$movieID")
 		if [  $(jq -r ".status" <<< "$responce") == "success" ];then
 				movie="$(jq ".movies" <<< $responce)"
-				current_movie="$(jq -r ".[0]" <<< $movie)"
-				id="$(jq -r ".id" <<< $current_movie)"
-				title="$(jq -r ".title" <<< $current_movie)"
-				producer="$(jq -r ".producer" <<< $current_movie)"
-				year="$(jq -r ".year" <<< $current_movie)"
-				description="$(jq -r ".info" <<< $current_movie)"
-				link="$(jq -r ".link" <<< $current_movie)"
-				#	print movie information
-				echo -e "--------------------------\nMovie ID : $id\nTitle : $title\nYear : $year\nProducer : $producer\nLink for more information : $link\nDescription : $description\n--------------------------\n"
+				if [ "$movie" != null ]; then
+					current_movie="$(jq -r ".[0]" <<< $movie)"
+					id="$(jq -r ".id" <<< $current_movie)"
+					title="$(jq -r ".title" <<< $current_movie)"
+					producer="$(jq -r ".producer" <<< $current_movie)"
+					year="$(jq -r ".year" <<< $current_movie)"
+					description="$(jq -r ".info" <<< $current_movie)"
+					link="$(jq -r ".link" <<< $current_movie)"
+					#	print movie information
+					echo -e "--------------------------\nMovie ID : $id\nTitle : $title\nYear : $year\nProducer : $producer\nLink for more information : $link\nDescription : $description\n--------------------------\n"
+				fi
 		else
 			echo "Movie with ID="$movieID" not found in library"
 			exit 1
@@ -315,18 +318,15 @@ fi
 if [ "$locationsF" == 1 ];then
 	locations=$(curl -s "http://localhost/Locations/")
 	length=`expr $(curl -s "http://localhost/Locations/" | jq length) - 1`
-	
+	format="%-12s| %-15s | %-50s\n"		#format for output
+	printf "\n$format" "Country" "City" "Address"
+	echo -e "--------------------------------------------"
 	for i in `seq 0 $length`;
-        do   
+        do       
         country="$(jq -r ".locations[$i].country" <<< $locations)"
         city="$(jq -r ".locations[$i].city" <<< $locations)"	
-        sublength=`expr "$(curl -s localhost/Locations/ | jq .locations[$i].Movies | jq length)" - 1`
-        movies="$(curl -s localhost/Locations/ | jq .locations[$i].Movies)"
-        echo $country : $city
-        for j in `seq 0 $sublength`; do
-			movie="$( jq .[$j].title <<< $movies)"
-			echo -e "\t" $movie
-        done
+        address="$(jq -r ".locations[$i].address" <<< $locations)"	
+        printf "$format" "$country" "$city" "$address"
     done
 
 fi
