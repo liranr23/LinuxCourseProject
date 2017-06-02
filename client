@@ -1,6 +1,6 @@
 #!/bin/bash 
 set -e 
-OPT=$(getopt -n "cf-dns" -o "h,v" -l "help,version,register:,movies,order:,history,cancel:,restore-key:,userkey:,locations,movie-info:" -- "$@")
+OPT=$(getopt -n "cf-dns" -o "h,v" -l "help,version,register:,movies,order:,history,cancel:,restore-key:,userkey:,locations,movieID:,movieName:" -- "$@")
 
 eval set -- "$OPT"
 hF=0
@@ -18,7 +18,7 @@ movieInfoF=0
 userKey=$GLOBAL_USER_KEY
 
 
-# check correct format of credentials i.ex : my@mail.com:apikey
+# check correct format of credentials i.ex : username:password
 function check_creds(){
 		tempvar="$1"	
 		separators="${tempvar//[^:]}"	# checking amount of ':' in credentials string
@@ -30,30 +30,15 @@ function check_creds(){
 		elif [ "${#separators}" == 0 ]; then
 			echo "client: credentials do not contain an API component"
 			exit 1
-		else			
-			if [ "$q" -eq 0 ]; then		# not in quite mode
-				echo "client: incorrect credentials format, correct format :
-				username:password"
-			fi
+		fi
+		# check not empty credentials
+		if [ -z "$password" ] || [ -z "$username" ];then
+			echo "client : Username and pussword can not be empty!"
+		
 			exit 1
 		fi
 }
 
-function credentials_analyzation(){
-		# if were selected -c operator, check it's parameters correctness
-		if [ "$c" -eq 1 ]; then
-				#run function to check correct credentials
-				check_creds "$received_creds"
-		#check if exists $creds in global environment, if has, check correctness of credentials
-		elif ! [ -z "$creds" ]; then
-				check_creds "$creds"
-		else
-			if [ "$q" -eq 0 ]; then		# not in quite mode
-				echo cf-dns: CloudFlare credentials not specified
-			fi
-				exit 1
-		fi
-}
 
 while [ "$1" != "--" ]; do
     case "$1" in
@@ -97,8 +82,13 @@ while [ "$1" != "--" ]; do
             locationsF=1
 	    ;;
 	    
-	   --movie-info)
-            movie_id="$2"
+	   --movieID)
+            movieID="$2"
+            movieInfoF=1
+            shift
+            ;;
+        --movieName)
+            movieName="$2"
             movieInfoF=1
             shift
             ;;
@@ -150,7 +140,8 @@ if [ "$registerF" == 1 ]; then
 			userAuthKey=$(jq -r ".key" <<< "$data")
 			echo -e "\n--------------------\nRegistration agent : You registered successfully\n--------------------\n	Username : "$username"\n	Password : "$password"\n	UserKey  : "$userAuthKey"\n	please save your userKey in safe place for ordering tikets\n	run next command to add key to work environment:\n	export GLOBAL_USER_KEY="$userAuthKey""
 		else
-			echo "\n--------------------\nRegistration agent : Registration failed, try again\n--------------------\n"
+			message="$(jq -r ".message" <<< "$data")"
+			echo -e "\n--------------------\nRegistration agent :  $message\n--------------------\n"
 			exit 1
 		fi
 	else
@@ -200,7 +191,7 @@ if [ "$restoreF" == 1 ];then
 		fi
 fi
 
-# Order ticket
+# Order ticket		NOT DONE
 if [ "$orderF" == 1 ]; then
 	if ! [ -z "$userKey" ];then
 		response=$(curl -s "http://localhost/Order/orderID="$movie_order_id"&key="$userKey"" )
@@ -217,11 +208,11 @@ if [ "$orderF" == 1 ]; then
 	fi
 fi
 
-# Cancel ordered ticket
+# Cancel ordered ticket		NOT DONE
 if [ "$cancelF" == 1 ]; then	
 	if ! [ -z "$userKey" ];then
 		cancel_result=$(curl -s http://localhost/Cancel/id="$cancel_movie_id"&key="$userKey" | jq ".result")
-		if  [ "$cancel_result" == "Success" ];then
+		if  [ "$cancel_result" == "success" ];then
 			echo "Your ticket number \""$cancel_movie_id"\" been cancelled!"
 		else
 			echo "Error in cancelling process, check all parameters"
@@ -233,7 +224,7 @@ if [ "$cancelF" == 1 ]; then
 fi
 
 
-# History view
+# History view		NOT DONE
 if [ "$historyF" == 1 ];then
 	if ! [ -z "$userKey" ]; then
 		history_list=$(curl "http://lcalhost/History/key="$userKey"")
@@ -251,20 +242,72 @@ if [ "$locations" == 1 ];then
 	# !!!! implement iteration to print locations list
 fi
 
+# get and prints movie by ID
+function printMoviesbyID(){
+		responce=$(curl -s http://localhost/Movies/ID="$movieID")
+		if [  $(jq -r ".status" <<< "$responce") == "success" ];then
+				movie="$(jq ".movies" <<< $responce)"
+				current_movie="$(jq -r ".[0]" <<< $movie)"
+				id="$(jq -r ".id" <<< $current_movie)"
+				title="$(jq -r ".title" <<< $current_movie)"
+				producer="$(jq -r ".producer" <<< $current_movie)"
+				year="$(jq -r ".year" <<< $current_movie)"
+				description="$(jq -r ".info" <<< $current_movie)"
+				link="$(jq -r ".link" <<< $current_movie)"
+				#	print movie information
+				echo -e "--------------------------\nMovie ID : $id\nTitle : $title\nYear : $year\nProducer : $producer\nLink for more information : $link\nDescription : $description\n--------------------------\n"
+		else
+			echo "Movie with ID="$movieID" not found in library"
+			exit 1
+		fi			
+}
+
+
+function printMoviesList(){
+	responce=$(curl -s http://localhost/Movies/title="$movieName")
+		if [  $(jq -r ".status" <<< "$responce") == "success" ];then
+		movies_list="$(jq ".movies" <<< $responce)"
+		arraySize="$(curl -s "http://localhost/Movies/title=$movieName" | jq .movies  | jq length)"
+			if [ "$arraySize" == 1 ];then
+				movie="$(jq -r ".[0]" <<< $movies_list)"
+				movieID="$(jq -r ".id" <<< $movie)"
+				printMoviesbyID
+			else
+			for i in `seq 0 $arraySize`;do
+				current_movie="$(jq -r ".[$i]" <<< $movies_list)"
+				movieID="$(jq -r ".id" <<< $current_movie)"
+				if [ "$movieID" != null ];then
+				printMoviesbyID
+				else
+					echo "No result for your request"
+					exit 1
+				fi
+
+			done
+			fi
+		else
+			echo "Movie with Name \""$movieName"\" not found in library"
+			exit 1
+		fi
+}
 
 # Movie info view
 if  [ "$movieInfoF" == 1 ];then
-	if ! [ -z "$movie_id" ]; then
-		movie_info=$(curl "http://localhost/Movie/ID="$movie_id"" | jq )
-		if ! [ -z "$movie_info" ];then
-			echo "$movie_info"
-			# !!! implement showing movie information
-		else
-			echo "Movie with ID="$movie_id" not found in library"
-		fi		
-	else
-		echo "Movie ID not provided"
+	echo -e "Movies according to your request :\n"
+	
+	# view movie by ID
+	if ! [ -z "$movieID" ]; then
+		printMoviesbyID	
 	fi
+	
+	 # view movie by name
+	if ! [ -z "$movieName" ]; then
+		printMoviesList
+	fi
+	
+	
+	exit 0
+	
 fi  
 
 
