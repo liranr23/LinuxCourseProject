@@ -53,7 +53,7 @@ while [ "$1" != "--" ]; do
             registerF=1
             shift
             ;;
-	--restore-key)
+	--recoverKey)
 			restoreF=1
 			restore_credentials="$2"
 			shift    
@@ -136,8 +136,31 @@ echo "Movie ordering system :
 	Register to system:
 		./client --register username:password
 	
-	View list of all movies :
-		./client --movies
+	Recover lost userkey:
+		./client --recoverKey <USERNAME>:<PASSWORD>
+	
+	View movies :
+		All movies:
+			./client --movies
+	
+		By ID:
+			./client --movieID <MOVIEID>
+		
+		By Name (or part of name,prefix):
+			./client --movieName \"MOVIE NAME\"
+			
+	View locations:
+		All without filtering:
+			./client --locations
+		
+		By ID:
+			./client --locationID <ID>
+		
+		By Country:
+			./client --locations --country <COUNTRY>, may be used country prefix
+		
+		By City:
+			./client --locations --city <CITY> , may be used city prefix
 	
 	"
     exit
@@ -416,6 +439,6 @@ if [ "$locationsF" == 1 ];then
 	else
 		printAllLocations
 	fi
-
+	exit
 fi
 
