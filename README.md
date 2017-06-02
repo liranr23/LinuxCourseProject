@@ -153,7 +153,7 @@ Bash interface :
 			./client --movieID <MOVIEID>
 		
 		By Name (or part of name,prefix):
-			./client --movieName \"MOVIE NAME\"
+			./client --movieName "MOVIE NAME"
 			
 	View locations:
 		All without filtering:
