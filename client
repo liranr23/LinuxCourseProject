@@ -383,8 +383,8 @@ function printOneLocation(){
 }
 
 function printAllLocations(){
-	locations=$(curl -s "http://localhost/Locations/")
-	length=$(curl -s "http://localhost/Locations/" | jq length) 
+	locations=$(curl -s "http://localhost/Locations/" )
+	length=$(curl -s "http://localhost/Locations/" | jq .locations | jq length) 
 	for i in `seq 0 $length`;
         do  
         current_movie="$(jq -r ".locations[$i]" <<< $locations)" 
@@ -409,7 +409,7 @@ function printLocationByID(){
 function printLocationByCity(){
 	if [ -n "$city" ];then
 		locations=$(curl -s "http://localhost/Locations/city="$city"")
-		length=$(curl -s "http://localhost/Locations/city="$city"" | jq length) 
+		length=$(curl -s "http://localhost/Locations/city="$city"" | jq .locations | jq length) 
 		for i in `seq 0 $length`;do  
 			current_movie="$(jq -r ".locations[$i]" <<< $locations)" 
 			printOneLocation "$current_movie"
@@ -424,7 +424,7 @@ function printLocationByCity(){
 function printLocationByCountry(){
 	if [ -n "$country" ];then
 		locations=$(curl -s "http://localhost/Locations/country="$country"")
-		length=$(curl -s "http://localhost/Locations/country="$country"" | jq length) 
+		length=$(curl -s "http://localhost/Locations/country="$country"" |jq .locations | jq length) 
 		for i in `seq 0 $length`;do  
 			current_movie="$(jq -r ".locations[$i]" <<< $locations)" 
 			printOneLocation "$current_movie"
