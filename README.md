@@ -117,16 +117,20 @@ localhost/Locations/country=<LOCATIONCOUNTRY>
 
 Response:
 ```json
-{"status":"success","locations":[{
-        "country":"Israel",
-        "city":"Tel Aviv",
-        "Movies":[
-
-]},{
-        "country":"Israel",
-        "city":"Beer Sheva",
-        "Movies":[
-
-]}]}
+{
+  "status": "success",
+  "locations": [
+    {
+      "country": "Israel",
+      "city": "Tel Aviv",
+      "address": "HaMasger 2"
+    },
+    {
+      "country": "Israel",
+      "city": "Beer Sheva",
+      "address": "Mesada 10"
+    }
+  ]
+}
 ```
 ## Interface
