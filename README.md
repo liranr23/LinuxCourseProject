@@ -136,7 +136,7 @@ Response:
 ## Interface
 ```browser
 Bash interface :
-./client -h :	this synopsis
+	./client -h :	synopsis
 	./client -v :	version with authors names
 	
 	Register to system:
