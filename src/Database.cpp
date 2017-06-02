@@ -134,7 +134,7 @@ void Database::selectMovieByID(string movieID)
 void Database::selectMovieByTitle(string movieTitle)
 {
     counter = selectCounter = 0;
-    string query = "SELECT * FROM MOVIES WHERE TITLE = '" + movieTitle + "'";
+    string query = "SELECT * FROM MOVIES WHERE TITLE LIKE '%" + movieTitle + "%'";
 
     rc = sqlite3_exec(dbFile, query.c_str(), countCallback, (void *)data, &errMsg);
 
