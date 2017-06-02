@@ -12,7 +12,9 @@ Location::~Location()
 
 string Location::ToJson()const {
 	// string res = "{\n\t\"country\":\"" + country + "\",\n\t\"city\":\"" + city + "\",\n\t\"Movies\":[\n\t";
-	string res = "{\n\t\"country\":\"" +
+	string res = "{\"id\":\"" +
+				id + "\"," +
+				"\n\t\"country\":\"" +
 				country + "\",\n\t\"city\":\"" +
 				city + "\",\n\t\"address\":\"" +
 				address + "\"\n}";
