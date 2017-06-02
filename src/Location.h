@@ -8,12 +8,13 @@ using namespace std;
 class Location
 {
 private:
-	string country, city;
-	list<Movie> movies;
+	string id ,country, city,address;
+	//list<Movie> movies;
 public:
-	Location(string _country, string _city);
+	Location(string,string, string, string);
 	~Location();
 	string ToJson()const;
-	void addMovie(Movie m);
+
+	//void addMovie(Movie m);
 };
 #endif

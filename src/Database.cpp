@@ -49,10 +49,12 @@ int Database::locationsCallback(void *data, int argc, char **argv, char **movieC
 {
     //TODO ADD ID TO THE LOCATION CLASS
     string
-        //id = argv[0],
+        id = argv[0],
         country = argv[1],
-        city = argv[2];
-    Location location(country, city);
+        city = argv[2],
+        address = argv[3];
+
+    Location location(id,country, city,address);
     cout << location.ToJson();
 
     if (++selectCounter != counter)
