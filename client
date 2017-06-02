@@ -1,6 +1,6 @@
 #!/bin/bash 
 set -e 
-OPT=$(getopt -n "cf-dns" -o "h,v" -l "help,version,register:,movies,order:,history,cancel:,restore-key:,userkey:,locations,movieID:,movieName:" -- "$@")
+OPT=$(getopt -n "cf-dns" -o "h,v" -l "help,version,register:,movies,order:,history,cancel:,recoverKey:,userkey:,locations,movieID:,movieName:,theaterID:,city:,country:" -- "$@")
 
 eval set -- "$OPT"
 hF=0
@@ -16,7 +16,7 @@ password=""
 locationsF=0
 movieInfoF=0
 userKey=$GLOBAL_USER_KEY
-
+format="%3s | %-12s | %-15s | %-50s\n"		#format for output
 
 # check correct format of credentials i.ex : username:password
 function check_creds(){
@@ -92,6 +92,21 @@ while [ "$1" != "--" ]; do
             movieInfoF=1
             shift
             ;;
+        --city)
+            city="$2"
+            cityF=1
+            shift
+    	      ;;
+        --theaterID)
+            theaterID="$2"
+            theaterIDF=1
+            shift
+            ;;
+        --country)
+            country="$2"
+            countryF=1
+            shift
+            ;;
 	 *)
 			echo Unknown parameter
 			exit 1
@@ -150,27 +165,7 @@ if [ "$registerF" == 1 ]; then
 	fi
 fi
 
-# Get all movies list
-if [ "$moviesF" == 1 ]; then 
-	movies_list="$(curl -s "http://localhost/Movies/")"
-	if [ $(jq -r ".status" <<< "$movies_list") == "success" ]; then
-	
-	length="$(curl -s "http://localhost/Movies/" |jq .movies | jq length)"
-	echo $length
-	format="%-3s| %-6s | %-50s\n"		#format for output
-	printf "\nFull Movies list :\n-------------------------\n$format--------------------------------------------------------\n" "ID" "Year" "Movie title"
-		for i in `seq 0 $length`;
-        do   
-			id="$(jq -r ".movies[$i].id" <<< $movies_list)"
-			title="$(jq -r ".movies[$i].title" <<< $movies_list)"
-			year="$(jq -r ".movies[$i].year" <<< $movies_list)"
-			printf "$format" "$id" "$year" "$title"
-        done  
-	else
-		echo "No data found"
-		exit 1
-	fi
-fi
+
 
 # Restore user key
 if [ "$restoreF" == 1 ];then
@@ -243,6 +238,39 @@ if [ "$locations" == 1 ];then
 	# !!!! implement iteration to print locations list
 fi
 
+
+
+
+function printMovie(){
+
+	movie="$1"
+	format="%3s | %-6s | %-50s\n"		#format for output
+	id="$(jq -r ".id" <<< $movie)"
+	title="$(jq -r ".title" <<< $movie)"
+	year="$(jq -r ".year" <<< $movie)"
+	printf "$format" "$id" "$year" "$title"
+}
+
+# Get all movies list
+if [ "$moviesF" == 1 ]; then 
+	movies_list="$(curl -s "http://localhost/Movies/")"
+	if [ "$(jq -r ".status" <<< "$movies_list")" == "success" ]; then
+	
+	length="$(curl -s "http://localhost/Movies/" |jq .movies | jq length)"
+	format="%3s | %-6s | %-50s\n"		#format for output
+	printf "\nFull Movies list :\n---------------------------\n$format--------------------------------------------------------\n" "ID" "Year" "Movie title"
+		for i in `seq 0 "$length"`;
+        do   
+			movie="$(jq -r ".movies[$i]" <<< $movies_list)"
+			if [ "$movie" != "null" ];then
+			printMovie "$movie"
+			fi
+        done  
+	else
+		echo "No data found"
+		exit 1
+	fi
+fi
 # get and prints movie by ID
 function printMoviesbyID(){
 		responce=$(curl -s http://localhost/Movies/ID="$movieID")
@@ -281,9 +309,6 @@ function printMoviesList(){
 				movieID="$(jq -r ".id" <<< $current_movie)"
 				if [ "$movieID" != null ];then
 				printMoviesbyID
-				else
-					echo "No result for your request"
-					exit 1
 				fi
 
 			done
@@ -313,21 +338,84 @@ if  [ "$movieInfoF" == 1 ];then
 	
 fi  
 
+# prints one received location
+function printOneLocation(){
+	location="$1"
+		id="$(jq -r ".id" <<< $location)"
+		if [ "$id" != "null" ];then
+			country="$(jq -r ".country" <<< $location)"
+			city="$(jq -r ".city" <<< $location)"	
+			address="$(jq -r ".address" <<< $location)"	
+			printf "$format" "$id" "$country" "$city" "$address"
+		fi
+}
 
+function printAllLocations(){
+	locations=$(curl -s "http://localhost/Locations/")
+	length=$(curl -s "http://localhost/Locations/" | jq length) 
+	for i in `seq 0 $length`;
+        do  
+        current_movie="$(jq -r ".locations[$i]" <<< $locations)" 
+        printOneLocation "$current_movie"
+
+    done
+    exit
+}
+
+
+function printLocationByID(){
+	if [ -n "$theaterID" ];then
+		location=$(curl -s "http://localhost/Locations/ID="$theaterID"" | jq .locations[0])
+		printOneLocation "$location"
+	else
+		echo "No movie ID received"
+		exit 1
+	fi
+	exit
+}
+
+function printLocationByCity(){
+	if [ -n "$city" ];then
+		locations=$(curl -s "http://localhost/Locations/city="$city"")
+		length=$(curl -s "http://localhost/Locations/city="$city"" | jq length) 
+		for i in `seq 0 $length`;do  
+			current_movie="$(jq -r ".locations[$i]" <<< $locations)" 
+			printOneLocation "$current_movie"
+		done
+	else
+		echo "No city value received"
+		exit 1
+	fi
+	exit
+}
+
+function printLocationByCountry(){
+	if [ -n "$country" ];then
+		locations=$(curl -s "http://localhost/Locations/country="$country"")
+		length=$(curl -s "http://localhost/Locations/country="$country"" | jq length) 
+		for i in `seq 0 $length`;do  
+			current_movie="$(jq -r ".locations[$i]" <<< $locations)" 
+			printOneLocation "$current_movie"
+		done
+	else
+		echo "No city value received"
+		exit 1
+	fi
+	exit
+}
 # View locations
 if [ "$locationsF" == 1 ];then
-	locations=$(curl -s "http://localhost/Locations/")
-	length=`expr $(curl -s "http://localhost/Locations/" | jq length) - 1`
-	format="%-12s| %-15s | %-50s\n"		#format for output
-	printf "\n$format" "Country" "City" "Address"
-	echo -e "--------------------------------------------"
-	for i in `seq 0 $length`;
-        do       
-        country="$(jq -r ".locations[$i].country" <<< $locations)"
-        city="$(jq -r ".locations[$i].city" <<< $locations)"	
-        address="$(jq -r ".locations[$i].address" <<< $locations)"	
-        printf "$format" "$country" "$city" "$address"
-    done
+	printf "$format" "ID" "Country" "City" "Address"
+	echo  "--------------------------------------------"
+	if [ "$theaterIDF" == 1 ];then
+		printLocationByID
+	elif [ "$cityF" == 1 ];then
+		printLocationByCity
+	elif [ "$countryF" == 1 ];then
+		printLocationByCountry
+	else
+		printAllLocations
+	fi
 
 fi
 
