@@ -78,7 +78,7 @@ localhost/Cancel/id=<ORDERID>&key=<USERKEY>
 ```browser
 localhost/Movies/
 localhost/Movies/ID=<MOVIEID>
-localhost/Movies/name=<MOVIENAME>
+localhost/Movies/title=<MOVIENAME>
 
 ```
 Response:
