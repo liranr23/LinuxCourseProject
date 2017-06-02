@@ -30,7 +30,7 @@ int main(void) {
 	//Getting the request uri:
 	    const char* uri = FCGX_GetParam("REQUEST_URI",request.envp);
 
-        cout << "Content-type: text/plain\r\n"
+        cout << "Content-type: application/json\r\n"
 	     << "\r\n";
 	    RequestManager::parse(uri);
 	cout <<"\n";
