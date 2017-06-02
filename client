@@ -181,7 +181,7 @@ if [ "$registerF" == 1 ]; then
 	if ! [ -z "$register_credentials" ]; then
 		check_creds "$register_credentials"
 		
-		data=$(curl -s "http://localhost/Register/username="$username"&password="$password"")
+		data=$(curl -s ""$server_address"/Register/username="$username"&password="$password"")
 
 		if [ $(jq -r ".status" <<< "$data") == "success" ]; then
 			userAuthKey=$(jq -r ".key" <<< "$data")
@@ -204,7 +204,7 @@ if [ "$restoreF" == 1 ];then
 	restoreF=0
 	if ! [ -z "$restore_credentials" ]; then
 		check_creds "$restore_credentials"
-		responce=$(curl -s "http://localhost/RecoverKey/username=$username&password=$password")
+		responce=$(curl -s ""$server_address"/RecoverKey/username=$username&password=$password")
 		echo -e  "\n--------------------\nKey recovery agent :\n--------------------"
 		if [  $(jq -r ".status" <<< "$responce") == "success" ]; then			
 			userKey=$(jq -r ".key" <<< "$responce")
@@ -222,7 +222,7 @@ fi
 # Order ticket		NOT DONE
 if [ "$orderF" == 1 ]; then
 	if ! [ -z "$userKey" ];then
-		response=$(curl -s "http://localhost/Order/orderID="$movie_order_id"&key="$userKey"" )
+		response=$(curl -s ""$server_address"/Order/orderID="$movie_order_id"&key="$userKey"" )
 		if [ $(jq -r ".status" <<< "$response") == "success"  ];then
 			orderID=$(jq -r ".OrderID" <<< "$response")
 			echo "Your order number is : "$orderID", enjoy!"
@@ -239,7 +239,7 @@ fi
 # Cancel ordered ticket		NOT DONE
 if [ "$cancelF" == 1 ]; then	
 	if ! [ -z "$userKey" ];then
-		cancel_result=$(curl -s http://localhost/Cancel/id="$cancel_movie_id"&key="$userKey" | jq ".result")
+		cancel_result=$(curl -s ""$server_address"/Cancel/id="$cancel_movie_id"&key="$userKey"" | jq ".result")
 		if  [ "$cancel_result" == "success" ];then
 			echo "Your ticket number \""$cancel_movie_id"\" been cancelled!"
 		else
@@ -255,22 +255,13 @@ fi
 # History view		NOT DONE
 if [ "$historyF" == 1 ];then
 	if ! [ -z "$userKey" ]; then
-		history_list=$(curl "http://lcalhost/History/key="$userKey"")
+		history_list=$(curl ""$server_address"/History/key="$userKey"")
 		
 		# !!!! implement iteration to print history list
 	else
 		echo "No credentials provided"
 	fi
 fi
-
-# Locations print
-if [ "$locations" == 1 ];then
-	locations_list=$(curl "http://localhost/Locations/")
-	
-	# !!!! implement iteration to print locations list
-fi
-
-
 
 
 function printMovie(){
@@ -285,10 +276,10 @@ function printMovie(){
 
 # Get all movies list
 if [ "$moviesF" == 1 ]; then 
-	movies_list="$(curl -s "http://localhost/Movies/")"
+	movies_list="$(curl -s ""$server_address"/Movies/")"
 	if [ "$(jq -r ".status" <<< "$movies_list")" == "success" ]; then
 	
-	length="$(curl -s "http://localhost/Movies/" |jq .movies | jq length)"
+	length="$(curl -s ""$server_address"/Movies/" |jq .movies | jq length)"
 	format="%3s | %-6s | %-50s\n"		#format for output
 	printf "\nFull Movies list :\n---------------------------\n$format--------------------------------------------------------\n" "ID" "Year" "Movie title"
 		for i in `seq 0 "$length"`;
@@ -305,7 +296,7 @@ if [ "$moviesF" == 1 ]; then
 fi
 # get and prints movie by ID
 function printMoviesbyID(){
-		responce=$(curl -s http://localhost/Movies/ID="$movieID")
+		responce=$(curl -s ""$server_address"/Movies/ID="$movieID"")
 		if [  $(jq -r ".status" <<< "$responce") == "success" ];then
 				movie="$(jq ".movies" <<< $responce)"
 				if [ "$movie" != null ]; then
@@ -327,10 +318,10 @@ function printMoviesbyID(){
 
 
 function printMoviesList(){
-	responce=$(curl -s http://localhost/Movies/title="$movieName")
+	responce=$(curl -s ""$server_address"/Movies/title="$movieName"")
 		if [  $(jq -r ".status" <<< "$responce") == "success" ];then
 		movies_list="$(jq ".movies" <<< $responce)"
-		arraySize="$(curl -s "http://localhost/Movies/title=$movieName" | jq .movies  | jq length)"
+		arraySize="$(curl -s ""$server_address"/Movies/title=$movieName" | jq .movies  | jq length)"
 			if [ "$arraySize" == 1 ];then
 				movie="$(jq -r ".[0]" <<< $movies_list)"
 				movieID="$(jq -r ".id" <<< $movie)"
@@ -383,8 +374,8 @@ function printOneLocation(){
 }
 
 function printAllLocations(){
-	locations=$(curl -s "http://localhost/Locations/" )
-	length=$(curl -s "http://localhost/Locations/" | jq .locations | jq length) 
+	locations=$(curl -s ""$server_address"/Locations/" )
+	length=$(curl -s ""$server_address"/Locations/" | jq .locations | jq length) 
 	for i in `seq 0 $length`;
         do  
         current_movie="$(jq -r ".locations[$i]" <<< $locations)" 
@@ -397,7 +388,7 @@ function printAllLocations(){
 
 function printLocationByID(){
 	if [ -n "$theaterID" ];then
-		location=$(curl -s "http://localhost/Locations/ID="$theaterID"" | jq .locations[0])
+		location=$(curl -s ""$server_address"/Locations/ID="$theaterID"" | jq .locations[0])
 		printOneLocation "$location"
 	else
 		echo "No movie ID received"
@@ -408,8 +399,8 @@ function printLocationByID(){
 
 function printLocationByCity(){
 	if [ -n "$city" ];then
-		locations=$(curl -s "http://localhost/Locations/city="$city"")
-		length=$(curl -s "http://localhost/Locations/city="$city"" | jq .locations | jq length) 
+		locations=$(curl -s ""$server_address"/Locations/city="$city"")
+		length=$(curl -s ""$server_address"/Locations/city="$city"" | jq .locations | jq length) 
 		for i in `seq 0 $length`;do  
 			current_movie="$(jq -r ".locations[$i]" <<< $locations)" 
 			printOneLocation "$current_movie"
@@ -423,8 +414,8 @@ function printLocationByCity(){
 
 function printLocationByCountry(){
 	if [ -n "$country" ];then
-		locations=$(curl -s "http://localhost/Locations/country="$country"")
-		length=$(curl -s "http://localhost/Locations/country="$country"" |jq .locations | jq length) 
+		locations=$(curl -s ""$server_address"/Locations/country="$country"")
+		length=$(curl -s ""$server_address"/Locations/country="$country"" |jq .locations | jq length) 
 		for i in `seq 0 $length`;do  
 			current_movie="$(jq -r ".locations[$i]" <<< $locations)" 
 			printOneLocation "$current_movie"
