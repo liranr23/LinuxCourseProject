@@ -80,13 +80,11 @@ int Database::ordersCallback(void *data, int argc, char **argv, char **keyCol)
         canceled = argv[3],
         key = argv[4];
 
-    //TODO: Use Order Object
-    cout << "Order ID: " << orderID 
-            << " Movie ID: " << movieID 
-            << " Location ID:" << locationID
-            << " Canceled: " << canceled
-            << " User Key: " << key << endl;
+    Order order(orderID,movieID,locationID,canceled=="1"?"true":"false",key);
 
+    cout << order.ToJson();
+    if (++selectCounter != counter)
+        cout << ",";
     return 0;
 };
 
@@ -252,9 +250,9 @@ void Database::selectOrdersByKey(string key){
     string query = "SELECT * FROM ORDERS WHERE USERKEY = '" + key + "'";
     rc = sqlite3_exec(dbFile, query.c_str(), countCallback, (void *)data, &errMsg);
    
-    //cout << "{\"status\":\"success\",\"key\":";
+    cout << "{\"status\":\"success\",\"orders\":[";
     rc = sqlite3_exec(dbFile, query.c_str(), ordersCallback, (void *)data, &errMsg);
-    //cout << "}";
+    cout << "]}";
     
     if (rc != SQLITE_OK)
         sqlite3_free(errMsg);
