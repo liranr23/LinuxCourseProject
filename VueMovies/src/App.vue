@@ -2,7 +2,7 @@
   <div id="app">
     <div v-if="loggedIn" >
       <button  v-on:click="loggedIn = false"> Logout </button>
-      <orderMenu></orderMenu>
+      <orderMenu :userKey="key"></orderMenu>
     </div>
     <div v-else>
       <input type="text" v-model="username" placeholder="Username"><br/>

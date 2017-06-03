@@ -12,7 +12,7 @@
                 <th>Year</th>
                 <th>Link</th>
             </tr>
-            <tr v-for="movie in movies" v-on:click="selectedMovie=movie">
+            <tr v-for="movie in movies" v-on:click="selectedMovieID=movie.id">
                 <td>{{movie.title}}</td>
                 <td>{{movie.producer}}</td>
                 <td>{{movie.year}}</td>
@@ -30,7 +30,7 @@
                 <th>City</th>
                 <th>Address</th>
             </tr>
-            <tr v-for="location in locations" v-on:click="selectedLocation=location">
+            <tr v-for="location in locations" v-on:click="selectedLocationID=location.id">
                 <td>{{location.country}}</td>
                 <td>{{location.city}}</td>
                 <td>{{location.address}}</td>
@@ -42,9 +42,22 @@
 
     <h1> Order History </h1>
 
-    <div> <!-- Will be another table once the api is complete -->
-        {{orders}}
-    </div>
+    <table cellpadding="10">
+        <tbody>
+            <tr>
+                <th>Order ID</th>
+                <th>Movie ID</th>
+                <th>Location ID</th>
+                <th>Canceled</th>
+            </tr>
+            <tr v-for="order in orders" v-on:click="selectedOrderID=order.id">
+                <td>{{order.id}}</td>
+                <td>{{order.movieID}}</td>
+                <td>{{order.locationID}}</td>
+                <td>{{order.canceled}}</td>
+            </tr>
+        </tbody>
+    </table>
 
   </div>
 </template>
@@ -58,34 +71,37 @@ export default {
        movies: [],
        locations: [],
        orders: [],
-       selectedMovie: undefined,
-       selectedLocation: undefined,
-       selectedOrder: undefined
+       selectedMovieID: NaN,
+       selectedLocationID: NaN ,
+       selectedOrderID: NaN
       }
         
     },
     methods: {
            order: function(){
-               console.log("Ordered: ",this.selectedMovie.id ,this.selectedLocation.id);
+               console.log("Ordered: ",this.selectedMovieID ,this.selectedLocationID);
                //Here should request @ localhost/Order/
 
                //And then:
                this.refreshHistory();
            },
            refreshHistory: function(){
+               console.log(this.userKey);
                this.$http.get('http://localhost/History/key=' + this.userKey)
                     .then(function(response){
-                //if (response.body.status == "success")
-                    console.log(this.orders = response);
+                if (response.body.status == "success")
+                    this.orders = response.body.orders;
             })
            }
         },
         created: function(){
+            //Order History
+            this.refreshHistory();
             //All Movies
             this.$http.get('http://localhost/Movies/')
             .then(function(response){
                 if (response.body.status == "success")
-                    console.log(this.movies = response.body.movies);
+                    this.movies = response.body.movies;
                     
             })
             //All locations
