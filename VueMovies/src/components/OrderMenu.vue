@@ -12,7 +12,9 @@
                 <th>Year</th>
                 <th>Link</th>
             </tr>
-            <tr v-for="movie in movies" v-on:click="selectedMovieID=movie.id">
+            <tr 
+            :class="{selected: movie.id == selectedMovieID}"
+            class="option"  v-for="movie in movies" v-on:click="selectedMovieID=movie.id">
                 <td>{{movie.title}}</td>
                 <td>{{movie.producer}}</td>
                 <td>{{movie.year}}</td>
@@ -30,7 +32,9 @@
                 <th>City</th>
                 <th>Address</th>
             </tr>
-            <tr v-for="location in locations" v-on:click="selectedLocationID=location.id">
+            <tr 
+            :class="{selected: location.id == selectedLocationID}"
+            class="option"  v-for="location in locations" v-on:click="selectedLocationID=location.id">
                 <td>{{location.country}}</td>
                 <td>{{location.city}}</td>
                 <td>{{location.address}}</td>
@@ -50,7 +54,9 @@
                 <th>Location ID</th>
                 <th>Canceled</th>
             </tr>
-            <tr v-for="order in orders" v-on:click="selectedOrderID=order.id">
+            <tr
+            :class="{selected: order.id == selectedOrderID}" 
+            class="option" v-for="order in orders" v-on:click="selectedOrderID=order.id">
                 <td>{{order.id}}</td>
                 <td>{{order.movieID}}</td>
                 <td>{{order.locationID}}</td>
@@ -58,6 +64,7 @@
             </tr>
         </tbody>
     </table>
+    <button v-on:click="cancelOrder">Cancel</button>
 
   </div>
 </template>
@@ -86,12 +93,19 @@ export default {
                this.refreshHistory();
            },
            refreshHistory: function(){
-               console.log(this.userKey);
                this.$http.get('http://localhost/History/key=' + this.userKey)
                     .then(function(response){
                 if (response.body.status == "success")
                     this.orders = response.body.orders;
             })
+           },
+           cancelOrder: function(){
+               console.log(this.selectedOrderID,this.userKey);
+
+               //  Here should request @ localhost/Cancel/
+
+               //And then:
+               this.refreshHistory();
            }
         },
         created: function(){
@@ -119,5 +133,17 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
+    .option{
+         cursor:pointer;
+    }
 
+    .option:hover{
+        background-color:red;
+        color:white;
+    }
+
+    .selected{
+        background-color:green;
+        color:white;
+    }
 </style>
