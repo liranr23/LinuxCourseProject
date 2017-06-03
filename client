@@ -1,22 +1,25 @@
 #!/bin/bash 
 set -e 
-OPT=$(getopt -n "cf-dns" -o "h,v" -l "help,version,register:,movies,order:,history,cancel:,restore-key:,userkey:,locations,movieID:,movieName:" -- "$@")
+OPT=$(getopt -n "cf-dns" -o "h,v" -l "help,version,register:,movies,order:,history,cancel:,recoverKey:,userkey:,locations,movieID:,movieName:,theaterID:,city:,country:" -- "$@")
 
 eval set -- "$OPT"
-hF=0
-vF=0
+#flags
 registerF=0
 moviesF=0
 orderF=0
 historyF=0
 cancelF=0
 restoreF=0
-username=""
-password=""
 locationsF=0
 movieInfoF=0
+#default values
+username=""
+password=""
 userKey=$GLOBAL_USER_KEY
-
+# decoration
+format="%3s | %-12s | %-15s | %-50s\n"		#format for output
+#server address link
+server_address="http://localhost"
 
 # check correct format of credentials i.ex : username:password
 function check_creds(){
@@ -33,27 +36,76 @@ function check_creds(){
 		fi
 		# check not empty credentials
 		if [ -z "$password" ] || [ -z "$username" ];then
-			echo "client : Username and pussword can not be empty!"
-		
+			echo "client : Username and pussword can not be empty!"	
 			exit 1
 		fi
 }
 
 
+#version
+function versionShow(){
+	echo -e "Linux environment programming: \n\nVersion 1.0\n
+Authors:\n-----------------------\nLiran Rotenberg\nJohnatan Leon\nIsabelle Meif\nAlexey Silyuk\n"
+	exit
+}
+
+#Synopsis
+function help(){
+	echo "Movie tickets ordering system :
+	
+	./client -h :	this synopsis
+	./client -v :	version with authors names
+	
+	Register to system:
+		./client --register username:password
+	
+	Recover lost userkey:
+		./client --recoverKey <USERNAME>:<PASSWORD>
+	
+	View movies :
+		All movies:
+			./client --movies
+	
+		By ID:
+			./client --movieID <MOVIEID>
+		
+		By Name (or part of name,prefix):
+			./client --movieName \"MOVIE NAME\"
+			
+	View locations:
+		All without filtering:
+			./client --locations
+		
+		By ID:
+			./client --locationID <ID>
+		
+		By Country:
+			./client --locations --country <COUNTRY>, may be used country prefix
+		
+		By City:
+			./client --locations --city <CITY> , may be used city prefix
+			
+	Ordering :
+		UNDER CONSTRUCTION
+	
+	"
+    exit
+}
+
 while [ "$1" != "--" ]; do
     case "$1" in
     -h|--help)
-            hF=1
+            help
             ;;
 	-v|--version)
-            vF=1
+            versionShow
             ;;
     --register)
             register_credentials="$2"
             registerF=1
             shift
             ;;
-	--restore-key)
+	--recoverKey)
 			restoreF=1
 			restore_credentials="$2"
 			shift    
@@ -92,6 +144,21 @@ while [ "$1" != "--" ]; do
             movieInfoF=1
             shift
             ;;
+        --city)
+            city="$2"
+            cityF=1
+            shift
+    	      ;;
+        --theaterID)
+            theaterID="$2"
+            theaterIDF=1
+            shift
+            ;;
+        --country)
+            country="$2"
+            countryF=1
+            shift
+            ;;
 	 *)
 			echo Unknown parameter
 			exit 1
@@ -107,26 +174,6 @@ if ! [ -z "$2" ]; then
 	exit 1
 fi
 
-#version
-if [ "$vF" -eq 1 ];then
-echo "Linux project version 1.0"
-fi
-
-
-# Synopsis
-if [ "$hF" -eq 1 ];then
-echo "Movie ordering system :
-	./client -h :	this synopsis
-	
-	Register to system:
-		./client --register username:password
-	
-	View list of all movies :
-		./client --movies
-	
-	"
-    exit
-fi
 
 # Register
 if [ "$registerF" == 1 ]; then
@@ -134,7 +181,7 @@ if [ "$registerF" == 1 ]; then
 	if ! [ -z "$register_credentials" ]; then
 		check_creds "$register_credentials"
 		
-		data=$(curl -s "http://localhost/Register/username="$username"&password="$password"")
+		data=$(curl -s ""$server_address"/Register/username="$username"&password="$password"")
 
 		if [ $(jq -r ".status" <<< "$data") == "success" ]; then
 			userAuthKey=$(jq -r ".key" <<< "$data")
@@ -150,34 +197,14 @@ if [ "$registerF" == 1 ]; then
 	fi
 fi
 
-# Get all movies list
-if [ "$moviesF" == 1 ]; then 
-	movies_list="$(curl -s "http://localhost/Movies/")"
-	if [ $(jq -r ".status" <<< "$movies_list") == "success" ]; then
-	
-	length="$(curl -s "http://localhost/Movies/" |jq .movies | jq length)"
-	echo $length
-	format="%-3s| %-6s | %-50s\n"		#format for output
-	printf "\nFull Movies list :\n-------------------------\n$format--------------------------------------------------------\n" "ID" "Year" "Movie title"
-		for i in `seq 0 $length`;
-        do   
-			id="$(jq -r ".movies[$i].id" <<< $movies_list)"
-			title="$(jq -r ".movies[$i].title" <<< $movies_list)"
-			year="$(jq -r ".movies[$i].year" <<< $movies_list)"
-			printf "$format" "$id" "$year" "$title"
-        done  
-	else
-		echo "No data found"
-		exit 1
-	fi
-fi
+
 
 # Restore user key
 if [ "$restoreF" == 1 ];then
 	restoreF=0
 	if ! [ -z "$restore_credentials" ]; then
 		check_creds "$restore_credentials"
-		responce=$(curl -s "http://localhost/RecoverKey/username=$username&password=$password")
+		responce=$(curl -s ""$server_address"/RecoverKey/username=$username&password=$password")
 		echo -e  "\n--------------------\nKey recovery agent :\n--------------------"
 		if [  $(jq -r ".status" <<< "$responce") == "success" ]; then			
 			userKey=$(jq -r ".key" <<< "$responce")
@@ -195,7 +222,7 @@ fi
 # Order ticket		NOT DONE
 if [ "$orderF" == 1 ]; then
 	if ! [ -z "$userKey" ];then
-		response=$(curl -s "http://localhost/Order/orderID="$movie_order_id"&key="$userKey"" )
+		response=$(curl -s ""$server_address"/Order/orderID="$movie_order_id"&key="$userKey"" )
 		if [ $(jq -r ".status" <<< "$response") == "success"  ];then
 			orderID=$(jq -r ".OrderID" <<< "$response")
 			echo "Your order number is : "$orderID", enjoy!"
@@ -212,7 +239,7 @@ fi
 # Cancel ordered ticket		NOT DONE
 if [ "$cancelF" == 1 ]; then	
 	if ! [ -z "$userKey" ];then
-		cancel_result=$(curl -s http://localhost/Cancel/id="$cancel_movie_id"&key="$userKey" | jq ".result")
+		cancel_result=$(curl -s ""$server_address"/Cancel/id="$cancel_movie_id"&key="$userKey"" | jq ".result")
 		if  [ "$cancel_result" == "success" ];then
 			echo "Your ticket number \""$cancel_movie_id"\" been cancelled!"
 		else
@@ -228,7 +255,7 @@ fi
 # History view		NOT DONE
 if [ "$historyF" == 1 ];then
 	if ! [ -z "$userKey" ]; then
-		history_list=$(curl "http://lcalhost/History/key="$userKey"")
+		history_list=$(curl ""$server_address"/History/key="$userKey"")
 		
 		# !!!! implement iteration to print history list
 	else
@@ -236,16 +263,40 @@ if [ "$historyF" == 1 ];then
 	fi
 fi
 
-# Locations print
-if [ "$locations" == 1 ];then
-	locations_list=$(curl "http://localhost/Locations/")
-	
-	# !!!! implement iteration to print locations list
-fi
 
+function printMovie(){
+
+	movie="$1"
+	format="%3s | %-6s | %-50s\n"		#format for output
+	id="$(jq -r ".id" <<< $movie)"
+	title="$(jq -r ".title" <<< $movie)"
+	year="$(jq -r ".year" <<< $movie)"
+	printf "$format" "$id" "$year" "$title"
+}
+
+# Get all movies list
+if [ "$moviesF" == 1 ]; then 
+	movies_list="$(curl -s ""$server_address"/Movies/")"
+	if [ "$(jq -r ".status" <<< "$movies_list")" == "success" ]; then
+	
+	length="$(curl -s ""$server_address"/Movies/" |jq .movies | jq length)"
+	format="%3s | %-6s | %-50s\n"		#format for output
+	printf "\nFull Movies list :\n---------------------------\n$format--------------------------------------------------------\n" "ID" "Year" "Movie title"
+		for i in `seq 0 "$length"`;
+        do   
+			movie="$(jq -r ".movies[$i]" <<< $movies_list)"
+			if [ "$movie" != "null" ];then
+			printMovie "$movie"
+			fi
+        done  
+	else
+		echo "No data found"
+		exit 1
+	fi
+fi
 # get and prints movie by ID
 function printMoviesbyID(){
-		responce=$(curl -s http://localhost/Movies/ID="$movieID")
+		responce=$(curl -s ""$server_address"/Movies/ID="$movieID"")
 		if [  $(jq -r ".status" <<< "$responce") == "success" ];then
 				movie="$(jq ".movies" <<< $responce)"
 				if [ "$movie" != null ]; then
@@ -267,10 +318,10 @@ function printMoviesbyID(){
 
 
 function printMoviesList(){
-	responce=$(curl -s http://localhost/Movies/title="$movieName")
+	responce=$(curl -s ""$server_address"/Movies/title="$movieName"")
 		if [  $(jq -r ".status" <<< "$responce") == "success" ];then
 		movies_list="$(jq ".movies" <<< $responce)"
-		arraySize="$(curl -s "http://localhost/Movies/title=$movieName" | jq .movies  | jq length)"
+		arraySize="$(curl -s ""$server_address"/Movies/title=$movieName" | jq .movies  | jq length)"
 			if [ "$arraySize" == 1 ];then
 				movie="$(jq -r ".[0]" <<< $movies_list)"
 				movieID="$(jq -r ".id" <<< $movie)"
@@ -281,9 +332,6 @@ function printMoviesList(){
 				movieID="$(jq -r ".id" <<< $current_movie)"
 				if [ "$movieID" != null ];then
 				printMoviesbyID
-				else
-					echo "No result for your request"
-					exit 1
 				fi
 
 			done
@@ -313,21 +361,84 @@ if  [ "$movieInfoF" == 1 ];then
 	
 fi  
 
+# prints one received location
+function printOneLocation(){
+	location="$1"
+		id="$(jq -r ".id" <<< $location)"
+		if [ "$id" != "null" ];then
+			country="$(jq -r ".country" <<< $location)"
+			city="$(jq -r ".city" <<< $location)"	
+			address="$(jq -r ".address" <<< $location)"	
+			printf "$format" "$id" "$country" "$city" "$address"
+		fi
+}
 
+function printAllLocations(){
+	locations=$(curl -s ""$server_address"/Locations/" )
+	length=$(curl -s ""$server_address"/Locations/" | jq .locations | jq length) 
+	for i in `seq 0 $length`;
+        do  
+        current_movie="$(jq -r ".locations[$i]" <<< $locations)" 
+        printOneLocation "$current_movie"
+
+    done
+    exit
+}
+
+
+function printLocationByID(){
+	if [ -n "$theaterID" ];then
+		location=$(curl -s ""$server_address"/Locations/ID="$theaterID"" | jq .locations[0])
+		printOneLocation "$location"
+	else
+		echo "No movie ID received"
+		exit 1
+	fi
+	exit
+}
+
+function printLocationByCity(){
+	if [ -n "$city" ];then
+		locations=$(curl -s ""$server_address"/Locations/city="$city"")
+		length=$(curl -s ""$server_address"/Locations/city="$city"" | jq .locations | jq length) 
+		for i in `seq 0 $length`;do  
+			current_movie="$(jq -r ".locations[$i]" <<< $locations)" 
+			printOneLocation "$current_movie"
+		done
+	else
+		echo "No city value received"
+		exit 1
+	fi
+	exit
+}
+
+function printLocationByCountry(){
+	if [ -n "$country" ];then
+		locations=$(curl -s ""$server_address"/Locations/country="$country"")
+		length=$(curl -s ""$server_address"/Locations/country="$country"" |jq .locations | jq length) 
+		for i in `seq 0 $length`;do  
+			current_movie="$(jq -r ".locations[$i]" <<< $locations)" 
+			printOneLocation "$current_movie"
+		done
+	else
+		echo "No city value received"
+		exit 1
+	fi
+	exit
+}
 # View locations
 if [ "$locationsF" == 1 ];then
-	locations=$(curl -s "http://localhost/Locations/")
-	length=`expr $(curl -s "http://localhost/Locations/" | jq length) - 1`
-	format="%-12s| %-15s | %-50s\n"		#format for output
-	printf "\n$format" "Country" "City" "Address"
-	echo -e "--------------------------------------------"
-	for i in `seq 0 $length`;
-        do       
-        country="$(jq -r ".locations[$i].country" <<< $locations)"
-        city="$(jq -r ".locations[$i].city" <<< $locations)"	
-        address="$(jq -r ".locations[$i].address" <<< $locations)"	
-        printf "$format" "$country" "$city" "$address"
-    done
-
+	printf "$format" "ID" "Country" "City" "Address"
+	echo  "--------------------------------------------"
+	if [ "$theaterIDF" == 1 ];then
+		printLocationByID
+	elif [ "$cityF" == 1 ];then
+		printLocationByCity
+	elif [ "$countryF" == 1 ];then
+		printLocationByCountry
+	else
+		printAllLocations
+	fi
+	exit
 fi
 
