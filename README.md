@@ -58,7 +58,9 @@ Response:
 ```browser
 localhost/Order/key=<USERKEY>&movieID=<MOVIEID>&locationID=<LOCATIONID>
 ```
-
+```json
+{"status":"success","message":"Ticket successfuly ordered"}
+```
 
 
 #### Returns tickets order history:
@@ -91,9 +93,15 @@ Response:
 #### Cancel a ticket
 
 ```browser
-localhost/Cancel/id=<ORDERID>&key=<USERKEY>
+localhost/Cancel/key=<USERKEY>&orderID=<ORDERID>
 ```
 
+Response:
+
+```json
+{"status":"success","message":"Ticket successfuly canceled"}
+
+```
 #### Lists Movies information (empty for all movies):
 
 ```browser
