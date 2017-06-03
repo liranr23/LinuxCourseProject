@@ -33,7 +33,9 @@ sudo apt-get install libsqlite3-dev
 
 ## API:
 
-Using HTTP Get Requests:
+##### For all Requests, there's a "status" value (success\failure) , when request fails a "message" value includes the reason
+
+Using HTTP Requests:
 
 #### Registers a new user with the username and password passed if possible
 ```browser
@@ -58,7 +60,9 @@ Response:
 ```browser
 localhost/Order/key=<USERKEY>&movieID=<MOVIEID>&locationID=<LOCATIONID>
 ```
-
+```json
+{"status":"success","message":"Ticket successfuly ordered"}
+```
 
 
 #### Returns tickets order history:
@@ -91,9 +95,15 @@ Response:
 #### Cancel a ticket
 
 ```browser
-localhost/Cancel/id=<ORDERID>&key=<USERKEY>
+localhost/Cancel/key=<USERKEY>&orderID=<ORDERID>
 ```
 
+Response:
+
+```json
+{"status":"success","message":"Ticket successfuly canceled"}
+
+```
 #### Lists Movies information (empty for all movies):
 
 ```browser
