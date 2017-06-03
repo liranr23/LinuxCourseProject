@@ -25,12 +25,28 @@ bool  RequestManager::parseTwoParam(string stringToParse, string param1, string 
 
 	int delimIndex = stringToParse.find("&");
 	if (delimIndex == -1) return false;
-	 
+
 	var1 = stringToParse.substr(param1.length() + 1, delimIndex - (param1.length() +1));
 	var2 = stringToParse.substr(delimIndex + param2.length() +2);
 
 	return true;
 };
+
+bool RequestManager::parseThreeParam(string stringToParse,
+ string param1, string param2, string param3,
+  string &var1, string &var2, string &var3){
+	if (stringToParse.find(param1+"=") != 0) return false;
+	int delimIndex = stringToParse.find("&");
+	if (delimIndex == -1) return false;
+	var1 = stringToParse.substr(param1.length() + 1, delimIndex - (param1.length() +1));
+	stringToParse = stringToParse.substr(param1.length() + var1.length() + 2);
+	
+	delimIndex = stringToParse.find("&");
+	if (delimIndex == -1) return false;
+	var2 = stringToParse.substr(param2.length() + 1 , delimIndex - (param2.length()+1));
+	var3 = stringToParse.substr(delimIndex +  param3.length() + 2);
+	return true;
+}
 
 
 
@@ -52,14 +68,16 @@ void RequestManager::getHistory(string key){
 	db.selectOrdersByKey(key);
 };
 
-void RequestManager::orderTicket(string orderID, string key){
+void RequestManager::orderTicket(string key,string movieID, string locationID){
 
-	cout <<  "Ticket Ordered " << orderID + ": " << key;
+	Database db;
+	db.createOrder(key,movieID,locationID);
 };
 
-void RequestManager::cancelTicket(string ticketID,string key){
+void RequestManager::cancelTicket(string key,string orderID){
 
-	cout << "Ticket canceled : " << ticketID;
+	Database db;
+	db.cancelOrder(key,orderID);
 }
 
 void RequestManager::getMoviesList(){
@@ -113,7 +131,6 @@ void RequestManager::parse(const char* stringToParse){
 		pass,
 		key,
 		orderID,
-		ticketID,
 		movieID,
 		movieName,
 		locationID,
@@ -152,15 +169,17 @@ void RequestManager::parse(const char* stringToParse){
 
 	case ORDER:
 
-		if (parseTwoParam(parsedString, "orderID", "key",orderID,key))
-			orderTicket(orderID,key);
+		if (parseThreeParam(parsedString,
+							"key","movieID","locationID",
+							key,movieID,locationID))
+			orderTicket(key,movieID,locationID);
 		else cout << defaultResponse;
 		break;
 
 	case CANCEL:
 
-		if (parseTwoParam(parsedString, "ticketID", "key", ticketID, key))
-			cancelTicket(ticketID,key);
+		if (parseTwoParam(parsedString, "key", "orderID", key, orderID))
+			cancelTicket(key,orderID);
 		else cout << defaultResponse;
 
 		break;

@@ -4,7 +4,8 @@
 
 // int main (int argc, char* argv[]){
 //     // RequestManager::parse("/Register/username=Anna&password=Dubi");
-//     RequestManager::parse("/Movies/");
+//     //RequestManager::parse("/Order/key=WO1V3RK3YDCBA4321&movieID=1&locationID=1");
+//     //RequestManager::parse("/Cancel/key=WO1V3RK3YDCBA4321&orderID=2");
 //     // RequestManager::parse("/Movies/ID=2");
 //     // RequestManager::parse("/Locations/");
 //     // RequestManager::parse("/Locations/city=Tel Aviv");

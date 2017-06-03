@@ -52,7 +52,7 @@ class Database{
 
     void selectOrdersByKey(string);
     void createOrder(string,string,string);
-
+    void cancelOrder(string,string);
 };
 
 #endif

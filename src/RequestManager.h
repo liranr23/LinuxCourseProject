@@ -21,8 +21,8 @@ private:
 	static void getHistory(string );
 
 	////Ticket Management
-	static void orderTicket(string orderID, string key);
-	static void cancelTicket(string ticketID,string key);
+	static void orderTicket(string, string ,string);
+	static void cancelTicket(string ,string);
 
 	////Information
 	static void getMoviesList();
@@ -33,9 +33,10 @@ private:
 	//Parser
 	static bool  parseOneParam(string , string , string&);
 	static bool  parseTwoParam(string , string , string , string&, string&);
+	static bool  parseThreeParam(string , string , string ,string,string&, string&, string&);
 
 public:
-	static void parse(const char* stringToParse);
+	static void parse(const char*);
 };
 
 #endif
