@@ -33,7 +33,9 @@ sudo apt-get install libsqlite3-dev
 
 ## API:
 
-Using HTTP Get Requests:
+#! For all Requests, there's a "status" value (success\failure) , when request fails a "message" value includes the reason
+
+Using HTTP Requests:
 
 #### Registers a new user with the username and password passed if possible
 ```browser
