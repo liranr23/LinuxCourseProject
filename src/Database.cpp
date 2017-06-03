@@ -77,10 +77,13 @@ int Database::ordersCallback(void *data, int argc, char **argv, char **keyCol)
         orderID = argv[0],
         movieID = argv[1],
         locationID = argv[2],
-        canceled = argv[3],
+        canceledStatus = argv[3],
         key = argv[4];
-
-    Order order(orderID,movieID,locationID,canceled=="1"?"true":"false",key);
+    
+    int isCanceled = canceledStatus.compare("1");
+    bool canceled = isCanceled==0;
+    
+    Order order(orderID,movieID,locationID,canceled,key);
 
     cout << order.ToJson();
     if (++selectCounter != counter)
