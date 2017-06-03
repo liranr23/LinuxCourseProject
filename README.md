@@ -33,7 +33,7 @@ sudo apt-get install libsqlite3-dev
 
 ## API:
 
-#! For all Requests, there's a "status" value (success\failure) , when request fails a "message" value includes the reason
+##### For all Requests, there's a "status" value (success\failure) , when request fails a "message" value includes the reason
 
 Using HTTP Requests:
 
