@@ -213,8 +213,55 @@ void Database::selectKey(string username, string password)
 
 string Database::createKey(string username, string password)
 {
-    return username + "key" + password;
+    string key = "";
+    for(int i = 0; i < username.size(); ++i){
+        switch(username[i]){
+            case 'a':
+            case 'A':
+                key += "4";
+                break;
+            case 'b':
+            case 'B':
+                key += "8";
+                break;
+            case 'e':
+            case 'E':
+                key += "3";
+                break;
+            case 'g':
+            case 'G':
+                key += "6";
+                break;
+            case 'l':
+            case 'L':
+                key += "1";
+                break;
+            case 'o':
+            case 'O':
+                key += "0";
+                break;
+            case 's':
+            case 'S':
+                key += "5";
+                break;
+            case 't':
+            case 'T':
+                key += "7";
+                break;
+            case 'z':
+            case 'Z':
+                key += "2";
+                break;
+            default:
+                key += toupper(username[i]);
+        }
+    }
+    key += "K3Y";
+    for(int i = password.size() - 1; i >= 0; --i)
+        key += toupper(password[i]);
+    return key;
 }
+
 void Database::createAccount(string username, string password)
 {
     counter = selectCounter = 0;
