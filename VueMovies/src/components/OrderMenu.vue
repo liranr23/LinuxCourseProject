@@ -1,71 +1,75 @@
 <template>
-  <div class="orderMenu">
+  <div class="orderMenu container">
+    <div class="row">
+        <div class="col">
+            <h2> Order a ticket </h2>
+            <h3>Movies:</h3>
 
-    <h1> Choose movie and location </h1>
-    <h2>Movies:</h2>
-
-    <table cellpadding="10">
-        <tbody>
-            <tr>
-                <th>Title</th>
-                <th>Producer</th>
-                <th>Year</th>
-                <th>Link</th>
-            </tr>
-            <tr 
-            :class="{selected: movie.id == selectedMovieID}"
-            class="option"  v-for="movie in movies" v-on:click="selectedMovieID=movie.id">
-                <td>{{movie.title}}</td>
-                <td>{{movie.producer}}</td>
-                <td>{{movie.year}}</td>
-                <td>{{movie.link}}</td>
-            </tr>
-        </tbody>
-    </table>
+            <table cellpadding="10">
+                <tbody>
+                    <tr>
+                        <th>Title</th>
+                        <th>Producer</th>
+                        <th>Year</th>
+                        <th>Link</th>
+                    </tr>
+                    <tr 
+                    :class="{selected: movie.id == selectedMovieID}"
+                    class="option"  v-for="movie in movies" v-on:click="selectedMovieID=movie.id">
+                        <td>{{movie.title}}</td>
+                        <td>{{movie.producer}}</td>
+                        <td>{{movie.year}}</td>
+                        <td><a :href="movie.link"> Link</a></td>
+                        
+                    </tr>
+                </tbody>
+            </table>
 
 
-    <h2> Locations </h2>
-    <table cellpadding="10">
-        <tbody>
-            <tr>
-                <th>Country</th>
-                <th>City</th>
-                <th>Address</th>
-            </tr>
-            <tr 
-            :class="{selected: location.id == selectedLocationID}"
-            class="option"  v-for="location in locations" v-on:click="selectedLocationID=location.id">
-                <td>{{location.country}}</td>
-                <td>{{location.city}}</td>
-                <td>{{location.address}}</td>
-            </tr>
-        </tbody>
-    </table>
+            <h3> Locations </h3>
+            <table cellpadding="10">
+                <tbody>
+                    <tr>
+                        <th>Country</th>
+                        <th>City</th>
+                        <th>Address</th>
+                    </tr>
+                    <tr 
+                    :class="{selected: location.id == selectedLocationID}"
+                    class="option"  v-for="location in locations" v-on:click="selectedLocationID=location.id">
+                        <td>{{location.country}}</td>
+                        <td>{{location.city}}</td>
+                        <td>{{location.address}}</td>
+                    </tr>
+                </tbody>
+            </table>
 
-    <button v-on:click="order">Order</button>
+            <button v-on:click="order">Order</button>
+        </div>
+        <div class="col">
+            <h2> Order History </h2>
 
-    <h1> Order History </h1>
-
-    <table cellpadding="10">
-        <tbody>
-            <tr>
-                <th>Order ID</th>
-                <th>Movie ID</th>
-                <th>Location ID</th>
-                <th>Canceled</th>
-            </tr>
-            <tr
-            :class="{selected: order.id == selectedOrderID}" 
-            class="option" v-for="order in orders" v-on:click="selectedOrderID=order.id">
-                <td>{{order.id}}</td>
-                <td>{{order.movieID}}</td>
-                <td>{{order.locationID}}</td>
-                <td>{{order.canceled}}</td>
-            </tr>
-        </tbody>
-    </table>
-    <button v-on:click="cancelOrder">Cancel</button>
-
+            <table cellpadding="10">
+                <tbody>
+                    <tr>
+                        <th>Order ID</th>
+                        <th>Movie ID</th>
+                        <th>Location ID</th>
+                        <th>Canceled</th>
+                    </tr>
+                    <tr
+                    :class="{selected: order.id == selectedOrderID}" 
+                    class="option" v-for="order in orders" v-on:click="selectedOrderID=order.id">
+                        <td>{{order.id}}</td>
+                        <td>{{order.movieID}}</td>
+                        <td>{{order.locationID}}</td>
+                        <td>{{order.canceled}}</td>
+                    </tr>
+                </tbody>
+            </table>
+            <button v-on:click="cancelOrder">Cancel</button>
+        </div>
+    </div>
   </div>
 </template>
 
@@ -153,5 +157,12 @@ export default {
     .selected{
         background-color:green;
         color:white;
+    }
+    h2{
+        margin-bottom: 20px;
+    }
+
+    table{
+        margin-bottom:15px;
     }
 </style>
