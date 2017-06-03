@@ -66,7 +66,28 @@ localhost/Order/key=<USERKEY>&movieID=<MOVIEID>&locationID=<LOCATIONID>
 localhost/History/key=<USERKEY>
 ```
 
-
+Response:
+```json
+{
+status: "success",
+orders: [
+{
+id: "1",
+movieID: "1",
+locationID: "1",
+canceled: "true",
+userKey: "WO1V3RK3YDCBA4321"
+},
+{
+id: "2",
+movieID: "2",
+locationID: "2",
+canceled: "true",
+userKey: "WO1V3RK3YDCBA4321"
+}
+]
+}
+```
 #### Cancel a ticket
 
 ```browser
