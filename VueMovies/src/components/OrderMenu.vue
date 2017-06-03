@@ -86,11 +86,16 @@ export default {
     },
     methods: {
            order: function(){
-               console.log("Ordered: ",this.selectedMovieID ,this.selectedLocationID);
                //Here should request @ localhost/Order/
-
+               this.$http.get("http://localhost/Order/key=" + this.userKey + 
+                            "&movieID=" + this.selectedMovieID + 
+                            "&locationID=" +this.selectedLocationID)
+                            .then(function(response){
+                                console.log(response);
+                                if (response.body.status == "success")
+                                this.refreshHistory();
+                            })
                //And then:
-               this.refreshHistory();
            },
            refreshHistory: function(){
                this.$http.get('http://localhost/History/key=' + this.userKey)
@@ -100,10 +105,14 @@ export default {
             })
            },
            cancelOrder: function(){
-               console.log(this.selectedOrderID,this.userKey);
 
                //  Here should request @ localhost/Cancel/
-
+            this.$http.get('http://localhost/Cancel/key=' + this.userKey + '&orderID=' + this.selectedOrderID)
+                    .then(function(response){
+                        console.log(response);
+                if (response.body.status == "success")
+                    this.refreshHistory();
+            })
                //And then:
                this.refreshHistory();
            }

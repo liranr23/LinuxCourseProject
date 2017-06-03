@@ -10,8 +10,6 @@
       <button v-on:click="login"> Login </button>
       <button v-on:click="register"> Register </button>
     </div>
-
-
   </div>
 </template>
 
