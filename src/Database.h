@@ -3,6 +3,7 @@
 
 #include <sqlite3.h>
 #include <stdlib.h>
+#include <cctype>
 #include "Location.h"
 #include "Movie.h"
 #include "Order.h"
