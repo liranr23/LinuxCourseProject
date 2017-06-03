@@ -1,9 +1,13 @@
 #!/bin/bash
 
-#Copying config to the nginx folder, saving the last conf
-sudo cp /etc/nginx/nginx.conf /etc/nginx/nginx.conf.bak && sudo rm /etc/nginx/nginx.conf
-sudo cp ./nginx.conf /etc/nginx/
+#Copying config to the usr share folder,
+sudo cp ./movies.conf /usr/share/nginx/movies.conf
 
-sudo nginx
+sudo nginx -c movies.conf &>/dev/null
 
-spawn-fcgi -p 8000 fcgi
+pid=$( cat ./moviesProcess.pid )
+if [ "$pid" != "" ];then
+    kill -KILL "$pid"
+fi
+spawn-fcgi -p 8000 fcgi -P moviesProcess.pid
+
