@@ -1,10 +1,11 @@
 <template>
-  <div class="orderMenu container">
     <div class="row">
-        <div class="col">
-            <h2> Order a ticket </h2>
+        <div class="col-8">
+            <div class="row align-items-center header">
+                <img  src="../assets/003-popcorn.svg">
+                <h2> Order a ticket </h2>
+            </div>
             <h3>Movies:</h3>
-
             <table cellpadding="10">
                 <tbody>
                     <tr>
@@ -25,7 +26,6 @@
                 </tbody>
             </table>
 
-
             <h3> Locations </h3>
             <table cellpadding="10">
                 <tbody>
@@ -44,11 +44,18 @@
                 </tbody>
             </table>
 
-            <button v-on:click="order">Order</button>
+            <button id="orderButton" v-on:click="order">Order</button>
+            <div class="row">
+              <p class="error" >{{orderErrorMsg}}</p>
+              <p class="success"> {{orderSuccessMsg}}</p>
+            </div>
         </div>
-        <div class="col">
-            <h2> Order History </h2>
-
+        <div class="col-4">
+            <div class="row align-items-center header">
+                <img  src="../assets/004-tickets.svg">
+                <h2> History </h2>
+            </div>
+            <h3> Past Orders </h3>
             <table cellpadding="10">
                 <tbody>
                     <tr>
@@ -67,10 +74,13 @@
                     </tr>
                 </tbody>
             </table>
-            <button v-on:click="cancelOrder">Cancel</button>
+            <button id="cancelButton" v-on:click="cancelOrder">Cancel</button>
+            <div class="row">
+              <p class="error" >{{cancelErrorMsg}}</p>
+              <p class="success"> {{cancelSuccessMsg}}</p>
+            </div>
         </div>
     </div>
-  </div>
 </template>
 
 <script>
@@ -84,41 +94,52 @@ export default {
        orders: [],
        selectedMovieID: NaN,
        selectedLocationID: NaN ,
-       selectedOrderID: NaN
+       selectedOrderID: NaN,
+       cancelErrorMsg: "",
+       cancelSuccessMsg: "",
+       orderErrorMsg: "",
+       orderSuccessMsg:""
       }
         
     },
     methods: {
            order: function(){
-               //Here should request @ localhost/Order/
+               this.orderErrorMsg = this.orderSuccessMsg = "";
                this.$http.get("http://localhost/Order/key=" + this.userKey + 
                             "&movieID=" + this.selectedMovieID + 
                             "&locationID=" +this.selectedLocationID)
                             .then(function(response){
                                 console.log(response);
-                                if (response.body.status == "success")
-                                this.refreshHistory();
+                                if (response.body.status == "success"){
+                                    this.orderSuccessMsg = response.body.message;
+                                    this.refreshHistory();
+                                }
+                                else this.orderErrorMsg = response.body.message;
+
+                                this.selectedOrderID = this.selectedMovieID =  NaN;
                             })
-               //And then:
            },
            refreshHistory: function(){
                this.$http.get('http://localhost/History/key=' + this.userKey)
                     .then(function(response){
-                if (response.body.status == "success")
-                    this.orders = response.body.orders;
-            })
+                        if (response.body.status == "success")
+                            this.orders = response.body.orders;
+                    })
            },
            cancelOrder: function(){
-
-               //  Here should request @ localhost/Cancel/
+            this.cancelErrorMsg = this.cancelSuccessMsg = ""
             this.$http.get('http://localhost/Cancel/key=' + this.userKey + '&orderID=' + this.selectedOrderID)
                     .then(function(response){
                         console.log(response);
-                if (response.body.status == "success")
-                    this.refreshHistory();
-            })
-               //And then:
-               this.refreshHistory();
+                        if (response.body.status == "success"){
+                            this.cancelSuccessMsg = response.body.message;
+                            this.refreshHistory();
+                        }
+                        else{
+                            this.cancelErrorMsg = response.body.message;
+                        }
+                        this.selectedOrderID = NaN;
+                        })
            }
         },
         created: function(){
@@ -129,7 +150,9 @@ export default {
             .then(function(response){
                 if (response.body.status == "success")
                     this.movies = response.body.movies;
-                    
+                else{
+                    this.orderErrorMsg = "Error Loading Movies";
+                }
             })
             //All locations
             this.$http.get('http://localhost/Locations/')
@@ -145,24 +168,55 @@ export default {
 </script>
 
 <style>
+    #cancelButton{
+        background-color: #F6A9CE;
+        color:white;
+        border:1px solid white;
+        cursor:pointer;
+    }
+
+    #orderButton{
+        background-color: #11CBD7;
+        color:white;
+        border:1px solid white;
+        cursor:pointer;
+        
+    }
+
     .option{
          cursor:pointer;
+         background-color: #FBF7F7;
     }
 
     .option:hover{
-        background-color:red;
-        color:white;
+        background-color:#FDDD8A;
     }
 
     .selected{
-        background-color:green;
-        color:white;
-    }
-    h2{
-        margin-bottom: 20px;
+        background-color:#9EFCB4;
+        
     }
 
-    table{
+    .header{
+        margin-bottom:30px;
+    }
+    img {
+        max-width:60px;
+    }
+
+    h2 {
         margin-bottom:15px;
+    }
+    table{
+        margin-bottom:50px;
+    }
+
+    th{
+        background-color: #DC3737;
+        color:white;
+        border:1px solid white;
+    }
+    td {
+        border:1px solid white;
     }
 </style>

@@ -1,17 +1,38 @@
 <template>
-  <div class= "container " id="app">
-    <img src="./assets/willferrel.jpg">
-    <div class="container" v-if="loggedIn" >
-      <div class="loginlogout">
-        <button v-on:click="loggedIn = false"> Logout </button>
-      </div>
-      <orderMenu :userKey="key"></orderMenu>
-    </div>
-    <div class="container loginlogout" v-else>
-          <input type="text" v-model="username" placeholder="Username"><br/>
-          <input type="text" v-model="password" placeholder="Password"><br/>
-          <button v-on:click="login"> Login </button>
-          <button v-on:click="register"> Register </button>
+  <div class= "container" id="app">
+    <div class="row">
+        <div class="container-fluid" v-if="loggedIn" >
+            <div class="row">
+              <div class="col-1 offset-11">
+                <button id="logoutButton" v-on:click="loggedIn = false"> Logout </button>
+              </div>
+            </div>
+            <div class="row">
+              <img class="logo col-4 offset-5" src="./assets/002-3d-glasses.svg">
+            </div>
+            <div class="row">
+              <orderMenu :userKey="key"></orderMenu>
+            </div>
+        </div>
+        <div class="col-6 offset-5 loginlogout" v-else>
+          <div class= "row">
+              <img class="logo" src="./assets/002-3d-glasses.svg">
+          </div>
+          <div class="row">
+              <input type="text"  v-on:keydown="errorMessage=successMessage=''" v-model="username" placeholder="Username">
+          </div>
+          <div class="row">
+              <input type="text" v-on:keydown="errorMessage=successMessage=''" v-model="password" placeholder="Password">
+          </div>
+          <div class="row">
+              <button id="loginButton" v-on:click="login">Login</button>
+              <button id="registerButton" v-on:click="register">Register</button>
+          </div>
+          <div class="row">
+              <p class="error" >{{errorMessage}}</p>
+              <p class="success"> {{successMessage}}</p>
+          </div>
+        </div>
     </div>
   </div>
 </template>
@@ -30,7 +51,9 @@ export default {
           loggedIn: false,
           username: "",
           password: "",
-          key: ""
+          key: "",
+          errorMessage: "",
+          successMessage: ""
       }
   },
   methods:{
@@ -39,13 +62,14 @@ export default {
                       + this.username + '&password=' + this.password)
           .then(function(response){
                   if (response.body.status == 'success'){
-                    console.log(response.body.key);
+                    this.successMessage = "Registered Successfuly";
                   }
-                  else console.log(response.body.message);
+                  else this.errorMessage = response.body.message;
+                  this.username = this.password = "";
           })
-      this.username = this.password = "";
     },
     login : function(){
+      this.successMessage = "";
       this.$http.get('http://localhost/RecoverKey/username='
                      + this.username + '&password=' + this.password)
         .then(function(response){
@@ -53,7 +77,7 @@ export default {
                   console.log(this.key = response.body.key);
                   this.loggedIn = true;
                 }
-                else console.log(response.body.message);
+                else console.log(this.errorMessage = response.body.message);
         })
       this.username = this.password = "";
     }
@@ -67,17 +91,48 @@ export default {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   color: #2c3e50;
-  margin: auto;
 }
-  .container{
-    padding:15px;
-  }
+#loginButton{
+  background-color: #F6A9CE;
+  color:white;
+  border:1px solid white;
+  cursor:pointer;
+}
 
-  .loginlogout{
-    margin-bottom: 50px;
-  }
+#registerButton{
+  background-color: #11CBD7;
+  color:white;
+  border:1px solid white;
+  cursor:pointer;
+}
 
-  img{
-    width: 300px;
-  }
+#logoutButton{
+  background-color: #FF9867;
+  color:white;
+  border:1px solid white;
+  cursor:pointer;
+}
+
+
+input{
+  width:200px;
+  text-align:center;
+  border:1px solid #E2DCD5;
+}
+
+button{
+  width: 100px;
+}
+
+.error{
+  color: #F03861;
+}
+
+.success{
+  color: #11CBD7;
+}
+.logo {
+    max-width:200px;
+    width:200px;
+}
 </style>
