@@ -261,7 +261,7 @@ if [ "$orderF" == 1 ]; then
 		if [ $(jq -r ".status" <<< "$response") == "success"  ];then
 			orderID=$(jq -r ".OrderID" <<< "$response")
 			echo $message
-			echo "Your order number is : "$orderID", enjoy!"
+			#echo "Your order number is : "$orderID", enjoy!"
 		else
 			echo $message
 			exit 1
