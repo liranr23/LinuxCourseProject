@@ -6,12 +6,10 @@ $sudo apt-get install autoconf
 $sudo apt intstall libtool-bin
 ```
 
-## API:
-
-##### Order of things
-###### Notice
+### Order of things
+##### Notice
 You can change the directory you wish to install the files, the default is "/usr/local/bin" to the executable and "/usr/local/lib" to the dynamic library!
-In this case you need to change Database.cpp and add THE PATH!!!("../databse.db" isn't enough!)
+######In this case you need to change Database.cpp and add THE PATH!!!("../databse.db" isn't enough!)
 Also, if you wish to change the library directory. You will need to use:
 ```bash
 $export LD_LIBRARY_PATH=YOURPATH
@@ -23,7 +21,7 @@ $./configure --prefix=/somewhere/else/than/usr/local
 or
 $./sudo make install DESTDIR=YOURDIR
 ```
-The default case:
+######The default case:
 
 ```bash
 $./mkdir m4
