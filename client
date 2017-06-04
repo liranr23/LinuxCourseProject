@@ -1,6 +1,6 @@
 #!/bin/bash 
 set -e 
-OPT=$(getopt -n "cf-dns" -o "h,v" -l "help,version,register:,movies,order:,history,cancel:,recoverKey:,userkey:,locations,movieID:,movieName:,theaterID:,city:,country:" -- "$@")
+OPT=$(getopt -n "cf-dns" -o "h,v" -l "help,version,register:,movies,order:,history:,cancel:,recoverKey:,userkey:,locations,movieID:,movieName:,theaterID:,city:,country:" -- "$@")
 
 eval set -- "$OPT"
 #flags
@@ -18,6 +18,7 @@ password=""
 userKey=$GLOBAL_USER_KEY
 # decoration
 format="%3s | %-12s | %-15s | %-50s\n"		#format for output
+format_orders="%3s | %-30s | %-50s\n"		#format for output
 #server address link
 server_address="http://localhost"
 
@@ -86,6 +87,9 @@ function help(){
 			./client --locations --city <CITY> , may be used city prefix
 			
 	Ordering :
+	
+	View orders history
+		./client --history <USERKEY>
 		UNDER CONSTRUCTION
 	
 	"
@@ -120,6 +124,8 @@ while [ "$1" != "--" ]; do
 	    ;;
 	--history)
             historyF=1
+            userKey="$2"
+			shift
 	    ;;
 	--order)
             movie_order_id="$2"
@@ -251,11 +257,44 @@ if [ "$cancelF" == 1 ]; then
 	fi	
 fi
 
+function getMovieNameByID(){
+	movie_id="$1"
+	movie_name=$(curl -s ""$server_address"/Movies/ID="$movie_id"" | jq .movies[0].title)
 
+}
+
+function getLocationsByID(){
+	location_id="$1"
+	location_country="$(curl -s ""$server_address"/Locations/ID="$location_id"" | jq .locations[0].country)"
+	location_city="$(curl -s ""$server_address"/Locations/ID="$location_id"" | jq .locations[0].city)"
+	location_address="$(curl -s ""$server_address"/Locations/ID="$location_id"" | jq .locations[0].address)"
+	location_name=""$location_country", "$location_city","$location_address""
+	
+	
+}
 # History view		NOT DONE
 if [ "$historyF" == 1 ];then
-	if ! [ -z "$userKey" ]; then
-		history_list=$(curl ""$server_address"/History/key="$userKey"")
+	if [ -n "$userKey" ]; then
+		history_list=$(curl -s ""$server_address"/History/key="$userKey"")
+		amount=$(curl ""$server_address"/History/key="$userKey"" | jq .orders | jq length)
+		echo "Orders for user with userkey "$userKey"\n"
+		if [ "$amount" == 0 ];then
+			echo "No history"
+			exit 1
+		fi	
+		printf "$format_orders" "Order ID" "Movie" "Location"
+		for i in `seq 0 "$amount"`; do
+			current_order=$(jq .orders["$i"] <<< "$history_list")
+			order_id=$(jq .id  <<< "$current_order")
+			if [ "$order_id" != null ];then		
+				movie_id=$(jq .movieID <<< "$current_order")
+				getMovieNameByID "$movie_id"
+				location_id=$(jq .locationID <<< "$current_order")
+				getLocationsByID "$location_id"
+				printf "$format_orders" "$order_id" "$movie_name" "$location_name"
+			fi
+		
+		done
 		
 		# !!!! implement iteration to print history list
 	else
