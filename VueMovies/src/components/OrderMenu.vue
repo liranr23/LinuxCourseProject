@@ -98,7 +98,8 @@ export default {
        cancelErrorMsg: "",
        cancelSuccessMsg: "",
        orderErrorMsg: "",
-       orderSuccessMsg:""
+       orderSuccessMsg:"",
+       url: "146.185.177.17:4000"
       }
         
     },
@@ -106,7 +107,7 @@ export default {
            order: function(){
 
                this.orderErrorMsg = this.orderSuccessMsg = "";
-               this.$http.get("http://localhost/Order/key=" + this.userKey + 
+               this.$http.get(this.url + "/Order/key=" + this.userKey + 
                             "&movieID=" + this.selectedMovieID + 
                             "&locationID=" +this.selectedLocationID)
                             .then(function(response){
@@ -121,7 +122,7 @@ export default {
                             })
            },
            refreshHistory: function(){
-               this.$http.get('http://localhost/History/key=' + this.userKey)
+               this.$http.get(this.url + '/History/key=' + this.userKey)
                     .then(function(response){
                         if (response.body.status == "success")
                             this.orders = response.body.orders;
@@ -129,7 +130,7 @@ export default {
            },
            cancelOrder: function(){
             this.cancelErrorMsg = this.cancelSuccessMsg = ""
-            this.$http.get('http://localhost/Cancel/key=' + this.userKey + '&orderID=' + this.selectedOrderID)
+            this.$http.get(this.url + '/Cancel/key=' + this.userKey + '&orderID=' + this.selectedOrderID)
                     .then(function(response){
                         console.log(response);
                         if (response.body.status == "success"){
@@ -147,7 +148,7 @@ export default {
             //Order History
             this.refreshHistory();
             //All Movies
-            this.$http.get('http://localhost/Movies/')
+            this.$http.get(this.url + '/Movies/')
             .then(function(response){
                 if (response.body.status == "success")
                     this.movies = response.body.movies;
@@ -156,7 +157,7 @@ export default {
                 }
             })
             //All locations
-            this.$http.get('http://localhost/Locations/')
+            this.$http.get(this.url + '/Locations/')
             .then(function(response){
                 if (response.body.status == "success")
                     this.locations = response.body.locations;

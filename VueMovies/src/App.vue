@@ -53,12 +53,13 @@ export default {
           password: "",
           key: "",
           errorMessage: "",
-          successMessage: ""
+          successMessage: "",
+          url: "146.185.177.17:4000"
       }
   },
   methods:{
     register : function(){
-      this.$http.get('http://localhost/Register/username='
+      this.$http.get(url + '/Register/username='
                       + this.username + '&password=' + this.password)
           .then(function(response){
                   if (response.body.status == 'success'){
@@ -70,7 +71,7 @@ export default {
     },
     login : function(){
       this.successMessage = "";
-      this.$http.get('http://localhost/RecoverKey/username='
+      this.$http.get(url + '/RecoverKey/username='
                      + this.username + '&password=' + this.password)
         .then(function(response){
                 if (response.body.status == 'success'){
