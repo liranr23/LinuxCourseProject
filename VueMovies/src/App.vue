@@ -54,7 +54,7 @@ export default {
           key: "",
           errorMessage: "",
           successMessage: "",
-          url: "146.185.177.17"
+          url: "http://146.185.177.17"
       }
   },
   methods:{

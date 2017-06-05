@@ -99,7 +99,7 @@ export default {
        cancelSuccessMsg: "",
        orderErrorMsg: "",
        orderSuccessMsg:"",
-       url: "146.185.177.17:4000"
+       url: "http://146.185.177.17"
       }
         
     },
