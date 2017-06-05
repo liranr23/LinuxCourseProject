@@ -199,5 +199,13 @@ Bash interface :
 		By City:
 			./client --locations --city <CITY> , may be used city prefix
       
-    Order : IN DEVELOPING
+   Ordering :	
+	View orders history
+		./client --history <USER_KEY>
+		
+	Order new ticket:
+		./client --order-ticket <MOVIE_ID>:<LOCATION_ID> --userkey <USER_KEY>
+		
+	Cancel ticket order:
+		./client --cancel-ticket <TICKET_ID> --userkey <USER_KEY>
 ```
