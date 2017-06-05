@@ -59,7 +59,7 @@ export default {
   },
   methods:{
     register : function(){
-      this.$http.get(url + '/Register/username='
+      this.$http.get(this.url + '/Register/username='
                       + this.username + '&password=' + this.password)
           .then(function(response){
                   if (response.body.status == 'success'){
@@ -71,7 +71,7 @@ export default {
     },
     login : function(){
       this.successMessage = "";
-      this.$http.get(url + '/RecoverKey/username='
+      this.$http.get(this.url + '/RecoverKey/username='
                      + this.username + '&password=' + this.password)
         .then(function(response){
                 if (response.body.status == 'success'){
