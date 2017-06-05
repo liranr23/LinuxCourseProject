@@ -3,7 +3,7 @@
 ```bash
 $sudo apt-get install autotools-dev
 $sudo apt-get install autoconf
-$sudo apt intstall libtool-bin
+$sudo apt install libtool-bin
 ```
 
 ### Order of things
