@@ -1,6 +1,6 @@
 #!/bin/bash 
 set -e 
-OPT=$(getopt -n "cf-dns" -o "h,v" -l "help,version,register:,movies,order:,history:,cancel:,recoverKey:,userkey:,locations,movieID:,movieName:,theaterID:,city:,country:" -- "$@")
+OPT=$(getopt -n "cf-dns" -o "h,v" -l "help,version,register:,movies,order:,history:,cancel-ticket:,recoverKey:,userkey:,locations,movieID:,movieName:,theaterID:,city:,country:" -- "$@")
 
 eval set -- "$OPT"
 #flags
@@ -18,7 +18,7 @@ password=""
 userKey=$GLOBAL_USER_KEY
 # decoration
 format="%3s | %-12s | %-15s | %-50s\n"		#format for output
-format_orders="%3s | %-30s | %-50s\n"		#format for output
+format_orders="%3s | %-30s | %-50s | %-12s\n"		#format for output
 #server address link
 server_address="http://localhost"
 
@@ -41,6 +41,27 @@ function check_creds(){
 			exit 1
 		fi
 }
+
+# check correct format of tcket order i.ex : <MOVIE_ID>:<LOCATION_ID>
+function perseOrderParameters(){
+		tempvar="$1"	
+		separators="${tempvar//[^:]}"	# checking amount of ':' in request string
+		
+		if [ "${#separators}" == 1 ]; then
+			#if have exactly 1 ':' delimiter, set locationID and movieID
+			location_order_id="${1#*:}"			
+			movie_order_id="${1%%:*}"	
+		elif [ "${#separators}" == 0 ]; then
+			echo "client: Incorrect pair "$1", correct is : <MOVIE_ID>:<LOCATION_ID> "
+			exit 1
+		fi
+		# check not empty credentials
+		if [ -z "$location_order_id" ] || [ -z "$movie_order_id" ];then
+			echo "client : Movie ID and Location ID cannot be empty!"	
+			exit 1
+		fi
+}
+
 
 
 #version
@@ -89,8 +110,13 @@ function help(){
 	Ordering :
 	
 	View orders history
-		./client --history <USERKEY>
-		UNDER CONSTRUCTION
+		./client --history <USER_KEY>
+		
+	Order new ticket:
+		./client --order-ticket <MOVIE_ID>:<LOCATION_ID> --userkey <USER_KEY>
+		
+	Cancel ticket order:
+		./client --cancel-ticket <TICKET_ID> --userkey <USER_KEY>
 	
 	"
     exit
@@ -117,7 +143,7 @@ while [ "$1" != "--" ]; do
 	--movies)
             moviesF=1
 	    ;;
-	--cancel)
+	--cancel-ticket)
             cancel_movie_id="$2"
             cancelF=1
             shift
@@ -128,7 +154,7 @@ while [ "$1" != "--" ]; do
 			shift
 	    ;;
 	--order)
-            movie_order_id="$2"
+            movie_order_params="$2"
             orderF=1
             shift
 	    ;;
@@ -176,7 +202,7 @@ done
 
 
 if ! [ -z "$2" ]; then
-	echo "cf-dns: unknown extra arguments : "$2""
+	echo "client: unknown extra arguments : "$2""
 	exit 1
 fi
 
@@ -227,13 +253,17 @@ fi
 
 # Order ticket		NOT DONE
 if [ "$orderF" == 1 ]; then
-	if ! [ -z "$userKey" ];then
-		response=$(curl -s ""$server_address"/Order/orderID="$movie_order_id"&key="$userKey"" )
+	if [ -n "$userKey" ];then	
+		perseOrderParameters "$movie_order_params"
+		response=$(curl -s ""$server_address"/Order/key="$userKey"&movieID="$movie_order_id"&locationID="$location_order_id"" )
+		message="$(jq .message <<< "$response")"
+
 		if [ $(jq -r ".status" <<< "$response") == "success"  ];then
 			orderID=$(jq -r ".OrderID" <<< "$response")
-			echo "Your order number is : "$orderID", enjoy!"
+			echo $message
+			#echo "Your order number is : "$orderID", enjoy!"
 		else
-			echo "Error in ordering process, check all parameters"
+			echo $message
 			exit 1
 	fi
 	else
@@ -242,14 +272,16 @@ if [ "$orderF" == 1 ]; then
 	fi
 fi
 
-# Cancel ordered ticket		NOT DONE
+# Cancel ordered ticket
 if [ "$cancelF" == 1 ]; then	
-	if ! [ -z "$userKey" ];then
-		cancel_result=$(curl -s ""$server_address"/Cancel/id="$cancel_movie_id"&key="$userKey"" | jq ".result")
-		if  [ "$cancel_result" == "success" ];then
+	if ! [ -z "$userKey" ];then	
+		responce=$(curl -s ""$server_address"/Cancel/key="$userKey"&orderID="$cancel_movie_id"")
+		cancel_result="$(jq -r ".status" <<< "$responce")"
+		status_message="$(jq -r ".message" <<< "$responce")"
+		if  [ "$cancel_result" == "success" ]; then
 			echo "Your ticket number \""$cancel_movie_id"\" been cancelled!"
 		else
-			echo "Error in cancelling process, check all parameters"
+			echo "$status_message"
 			exit 1
 		fi
 	else
@@ -272,31 +304,36 @@ function getLocationsByID(){
 	
 	
 }
-# History view		NOT DONE
+# History view
 if [ "$historyF" == 1 ];then
 	if [ -n "$userKey" ]; then
 		history_list=$(curl -s ""$server_address"/History/key="$userKey"")
-		amount=$(curl ""$server_address"/History/key="$userKey"" | jq .orders | jq length)
-		echo "Orders for user with userkey "$userKey"\n"
+		amount=$(curl -s ""$server_address"/History/key="$userKey"" | jq .orders | jq length)
+		echo -e "\nOrders for user with userkey "$userKey"\n"
 		if [ "$amount" == 0 ];then
 			echo "No history"
 			exit 1
 		fi	
-		printf "$format_orders" "Order ID" "Movie" "Location"
+		printf "$format_orders" "ID" "Movie Title" "Location" "Status"
+		printf "$format_orders" "---" "------------" "---------" "--------"
 		for i in `seq 0 "$amount"`; do
 			current_order=$(jq .orders["$i"] <<< "$history_list")
-			order_id=$(jq .id  <<< "$current_order")
+			order_id=$(jq -r ".id"  <<< "$current_order")
 			if [ "$order_id" != null ];then		
-				movie_id=$(jq .movieID <<< "$current_order")
+				movie_id=$(jq -r ".movieID" <<< "$current_order")
 				getMovieNameByID "$movie_id"
-				location_id=$(jq .locationID <<< "$current_order")
+				location_id=$(jq -r ".locationID" <<< "$current_order")
 				getLocationsByID "$location_id"
-				printf "$format_orders" "$order_id" "$movie_name" "$location_name"
+				isCanceled=$(jq -r ".canceled" <<< "$current_order")
+				if [ "$isCanceled" == "true" ]; then 
+					status="Canceled"
+				else
+					status="Active"
+				fi
+				printf "$format_orders" "$order_id" "$movie_name" "$location_name" "$status"
 			fi
 		
 		done
-		
-		# !!!! implement iteration to print history list
 	else
 		echo "No credentials provided"
 	fi
@@ -333,6 +370,8 @@ if [ "$moviesF" == 1 ]; then
 		exit 1
 	fi
 fi
+
+
 # get and prints movie by ID
 function printMoviesbyID(){
 		responce=$(curl -s ""$server_address"/Movies/ID="$movieID"")
