@@ -32,6 +32,7 @@ $./sudo make install DESTDIR=YOURDIR
 ```bash
 $./mkdir m4
 $./autoreconf --install
+$./configure
 $./make
 $./sudo make install
 ```
