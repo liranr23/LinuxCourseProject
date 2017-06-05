@@ -104,6 +104,7 @@ export default {
     },
     methods: {
            order: function(){
+
                this.orderErrorMsg = this.orderSuccessMsg = "";
                this.$http.get("http://localhost/Order/key=" + this.userKey + 
                             "&movieID=" + this.selectedMovieID + 
