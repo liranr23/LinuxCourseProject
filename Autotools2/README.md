@@ -7,10 +7,13 @@ $sudo apt intstall libtool-bin
 ```
 
 ### Order of things
+
+You need to put the files from this directory into to original one, the one in src will be in the original src!
+
 #### Notice
 You can change the directory you wish to install the files, the default is "/usr/local/bin" to the executable and "/usr/local/lib" to the dynamic library!
 
-#### In this case you need to change Database.cpp and add THE PATH!!!("../databse.db" isn't enough!)
+#### In this case you need to change Database.h and add THE PATH!!!("../databse.db" isn't enough!)
 
 Also, if you wish to change the library directory. You will need to use:
 ```bash
