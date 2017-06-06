@@ -1,9 +1,12 @@
 #!/bin/bash
 
+#Shutting down the nginx server
+sudo nginx -c movies.conf -s quit 2>/dev/null
+
 #Setting root of server to dist
 dist=$(pwd)
 dist="${dist%/*}"/distLocal
-sed -i "/<root>/c\root $dist ;" movies.conf
+sed -i "/<root>/c\root $dist;" movies.conf
 
 #Copying config to the usr share folder,
 sudo cp ./movies.conf /usr/share/nginx/movies.conf
