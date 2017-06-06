@@ -1,4 +1,8 @@
 # Autotools
+
+Make sure you've installed the needed tools (Sqlite,FCGI,Nginx etc..)
+For Ubuntu installation instructions refer to [Installation](Installation.md)
+
 ## To Run:
 ```bash
 $sudo apt-get install autotools-dev
