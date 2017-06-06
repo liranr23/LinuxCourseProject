@@ -1,12 +1,17 @@
 # Linux Environment Project
 
-// Explanation about the project here //
+"Full Stack" Ticket Ordering project using nginx with SQLite3 as a backend, VueJS \ Shell terminal as a front-end using HTTP Requests to communicate with the backend (JSON Responses).
+Packaged and supported by AutoTools to support cross compilation.
+
+Includes two distributions of the VueJS application: Localhost based http requests and Remote http requests to a DigitalOcean droplet (POC of using different machines instead of host)
+
+Working example here , you can also[ attempt HTTP Requests on your own 
 
 ## [Installation](docs/Installation.md)
-## [How to Run](doc/Running.md)
-## [API](doc/API.md)
-## [Client Bash script](doc/Client.md)
-## [Web application](doc/Web.md)
+## [How to Run](docs/Running.md)
+## [API](docs/API.md)
+## [Client Bash script](docs/Client.md)
+## [Web application](docs/Web.md)
 
 
 
