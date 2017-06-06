@@ -10,7 +10,7 @@ Working example [here](http://146.185.177.17/index.html) , you can also attempt 
 To use on your own machine, carefully follow the following steps:
 
 ## [Installation](docs/Installation.md)
-## [AutoTools](docs/AutoTools.md)
+## [AutoTools](docs/Autotools.md)
 ## [How to Run](docs/Running.md)
 ## [API](docs/API.md)
 ## [Client Bash script](docs/Client.md)
