@@ -34,11 +34,11 @@ $./sudo make install DESTDIR=YOURDIR
 ##### The default case:
 
 ```bash
-$./mkdir m4
-$./autoreconf --install
+$mkdir m4
+$autoreconf --install
 $./configure
-$./make
-$./sudo make install
+$make
+$sudo make install
 ```
 
 After you done these, You'll have an executable src/fcgi which is dependant on the dynamic library created above.
