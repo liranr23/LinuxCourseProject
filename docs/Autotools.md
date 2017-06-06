@@ -41,12 +41,6 @@ $./make
 $./sudo make install
 ```
 
-After you done these, go to /usr/local/bin
+After you done these, You'll have an executable src/fcgi which is dependant on the dynamic library created above.
 
-Run the command normally(after nginx is up):
-```bash
-$./spawn-fcgi -p 8000 fcgi
-
-```
-
-Enjoy!
+####To continue refer to [How to Run](Running.md)
