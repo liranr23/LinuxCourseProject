@@ -26,10 +26,3 @@ sudo apt-get install libsqlite3-dev
 #### Autotools
 
 After installing the relevant tools, refer to the [Autotools](Autotools.md) instructions for compliation and linking
-
-## To Run:
-```bash
-$cd src
-$./compile.sh
-$./run.sh
-```
