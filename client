@@ -1,6 +1,6 @@
 #!/bin/bash 
 set -e 
-OPT=$(getopt -n "cf-dns" -o "h,v" -l "help,version,register:,movies,order:,history:,cancel-ticket:,recoverKey:,userkey:,locations,movieID:,movieName:,theaterID:,city:,country:" -- "$@")
+OPT=$(getopt -n "client" -o "h,v" -l "help,version,ip:,register:,movies,order:,history:,cancel-ticket:,recoverKey:,userkey:,locations,movieID:,movieName:,theaterID:,city:,country:" -- "$@")
 
 eval set -- "$OPT"
 #flags
@@ -78,6 +78,9 @@ function help(){
 	./client -h :	this synopsis
 	./client -v :	version with authors names
 	
+	Change API's ip:
+		./client --ip <IP> [OPTS]
+
 	Register to system:
 		./client --register username:password
 	
@@ -191,6 +194,10 @@ while [ "$1" != "--" ]; do
             countryF=1
             shift
             ;;
+	--ip)
+	    server_address=http://"$2"
+	    shift
+	    ;;
 	 *)
 			echo Unknown parameter
 			exit 1
