@@ -16,6 +16,17 @@ chmod +x refreshDB.sh
 ## Running local website for remote api (Droplet on digitalOcean)
 - Change the <Root> (root ..../distLocal) line in movies.conf to: ../distRemote.
 - Run as instructed above.
+
+## Setting the server to be started on reboot:
+
+```bash
+chmod +x cronjob.sh
+sudo crontab -e
+```
+- Add @reboot "/.../cronjob.sh" (Destination to the cronjob)"
+- Reboot
+
+
 ## Shutting down:
 
 ```bash
