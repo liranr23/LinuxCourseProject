@@ -15,3 +15,6 @@ To use on your own machine, carefully follow the following steps:
 ## [API](docs/API.md)
 ## [Client Bash script](docs/Client.md)
 ## [Web application](docs/Web.md)
+
+
+#####Contributors: Jonathan Leon, Liran Rotenberg, Alexey Syliuk, Isabelle Mief 
