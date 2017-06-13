@@ -17,4 +17,4 @@ To use on your own machine, carefully follow the following steps:
 ## [Web application](docs/Web.md)
 
 
-#####Contributors: Jonathan Leon, Liran Rotenberg, Alexey Syliuk, Isabelle Mief 
+##### Contributors: Jonathan Leon, Liran Rotenberg, Alexey Syliuk, Isabelle Mief 
